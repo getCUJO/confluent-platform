@@ -1,7 +1,6 @@
 #
 # Author:: Samuel Bernard (<samuel.bernard@s4m.io>)
 # Cookbook Name:: confluent-platform
-# Recipe:: default
 #
 # Copyright (c) 2015 Sam4Mobile
 #
@@ -18,4 +17,10 @@
 # limitations under the License.
 #
 
-include_recipe "#{cookbook_name}::repository"
+#
+# Default attributes
+#
+
+# confluent versions
+default['confluent-platform']['version']     = '1.0'
+default['confluent-platform']['scala_version'] = "2.11.5"

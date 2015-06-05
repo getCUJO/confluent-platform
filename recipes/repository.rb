@@ -1,7 +1,7 @@
 #
 # Author:: Samuel Bernard (<samuel.bernard@s4m.io>)
 # Cookbook Name:: confluent-platform
-# Recipe:: default
+# Recipe:: repository
 #
 # Copyright (c) 2015 Sam4Mobile
 #
@@ -18,4 +18,22 @@
 # limitations under the License.
 #
 
-include_recipe "#{cookbook_name}::repository"
+version = node.attribute['confluent-platform']['version']
+
+case node['platform_family']
+when 'rhel'
+  include_recipe 'yum'
+  yum_repository 'confluent' do
+    description "Confluent platform v#{version} repository"
+    baseurl "http://packages.confluent.io/rpm/#{version}"
+    gpgkey "http://packages.confluent.io/rpm/#{version}/archive.key"
+    action :create
+  end
+when 'debian'
+  apt_repository 'confluent' do
+    uri "http://packages.confluent.io/deb/#{version}"
+    components ['stable', 'main']
+    arch 'all'
+    key "http://packages.confluent.io/deb/#{version}/archive.key"
+  end
+end
