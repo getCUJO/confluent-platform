@@ -1,0 +1,7 @@
+name 'confluent-platform'
+maintainer 'Sam4Mobile'
+maintainer_email 'samuel.bernard@s4m.io'
+license 'Apache 2.0'
+description 'Installs/Configures confluent-platform'
+long_description 'Installs/Configures confluent-platform'
+version '1.0.0'
