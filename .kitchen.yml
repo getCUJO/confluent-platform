@@ -85,4 +85,4 @@ suites:
       instance_name: kafka-kitchen-01
       dns: $(docker inspect --format '{{.NetworkSettings.IPAddress}}' dnsdock-kafka)
     run_list:
-      - recipe[confluent-platform]
+      - role[kafka-kitchen]

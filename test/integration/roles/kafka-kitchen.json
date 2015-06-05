@@ -1,0 +1,30 @@
+{
+  "name": "kafka-kitchen",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+    "confluent-platform": {
+      "zookeeper": {
+        "hosts": [
+          "zookeeper-kafka.kitchen"
+        ]
+      },
+      "kafka": {
+        "role": "kafka-kitchen",
+        "size": 3,
+        "config": {
+          "auto.create.topics.enable": "false"
+        }
+      }
+    }
+  },
+  "override_attributes": {
+
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[confluent-platform::default]"
+  ],
+  "env_run_lists": {
+
+  }
+}

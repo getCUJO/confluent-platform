@@ -22,5 +22,40 @@
 #
 
 # confluent versions
-default['confluent-platform']['version']     = '1.0'
-default['confluent-platform']['scala_version'] = "2.11.5"
+default['confluent-platform']['version']        = '1.0'
+default['confluent-platform']['scala_version']  = "2.11.5"
+
+# Zookeeper
+# To understand the following attributes, look at 'cluster-search' doc
+default['confluent-platform']['zookeeper']['role']  = 'zookeeper-cluster'
+default['confluent-platform']['zookeeper']['hosts'] = []
+default['confluent-platform']['zookeeper']['size']  = 3
+
+# Cluster configuration
+default['confluent-platform']['kafka']['role']  = 'kafka-cluster'
+default['confluent-platform']['kafka']['hosts'] = []
+default['confluent-platform']['kafka']['size']  = 3
+
+# Kafka configuration, default provided by Kafka project
+default['confluent-platform']['kafka']['config']      = {
+  'broker.id' => 0,
+  'port' => 9092,
+  'num.network.threads' => 3,
+  'num.io.threads' => 8,
+  'socket.send.buffer.bytes' => 102400,
+  'socket.receive.buffer.bytes' => 102400,
+  'socket.request.max.bytes' => 104857600,
+  'log.dirs' => '/var/lib/kafka',
+  'num.partitions' => 1,
+  'num.recovery.threads.per.data.dir' => 1,
+  'log.retention.hours' => 168,
+  'log.segment.bytes' => 1073741824,
+  'log.retention.check.interval.ms' => 300000,
+  'log.cleaner.enable' => false,
+  'zookeeper.connect' => 'localhost:2181',
+  'zookeeper.connection.timeout.ms' => 6000
+}
+
+# Always use a chroot in Zookeeper
+default['confluent-platform']['kafka']['zk_chroot'] =
+  "/#{node['confluent-platform']['kafka']['role']}"
