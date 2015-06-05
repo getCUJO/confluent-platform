@@ -10,4 +10,5 @@ version '1.0.0'
 
 supports 'centos',  '>= 7'
 
+depends 'cluster-search'
 depends 'yum'
