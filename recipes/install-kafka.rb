@@ -48,6 +48,14 @@ template "/etc/kafka/server.properties" do
 #  notifies :restart, "service[kafka]"
 end
 
+directory '/var/log/kafka' do
+  owner node['confluent-platform']['kafka']['user']
+  group node['confluent-platform']['kafka']['user']
+  mode '0755'
+  recursive true
+  action :create
+end
+
 # Config for systemd service
 jmx_port = node['confluent-platform']['kafka']['jmx_port']
 jmx_port = "-Dcom.sun.management.jmxremote.port=#{jmx_port}" if jmx_port != ""
