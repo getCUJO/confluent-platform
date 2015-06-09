@@ -18,39 +18,6 @@
 # limitations under the License.
 #
 
-# Use ClusterSearch
-::Chef::Recipe.send(:include, ClusterSearch)
-
 # Install Kafka with configured scala version
 scala_version = node.attribute['confluent-platform']['scala_version']
 package "confluent-kafka-#{scala_version}"
-
-# Get default configuration
-config = {}.merge! node['confluent-platform']['kafka']['config']
-
-# Search zookeeper cluster
-zookeeper = cluster_search(node['confluent-platform']['zookeeper'])
-return if zookeeper == nil # Not enough nodes
-zk_connection = zookeeper['hosts'].map { |h| h + ":2181" }.join(',')
-zk_connection += node['confluent-platform']['kafka']['zk_chroot']
-config['zookeeper.connect'] = zk_connection
-
-# Search other Kafka
-kafka = cluster_search(node['confluent-platform']['kafka'])
-return if kafka == nil
-config['broker.id'] = kafka['my_id']
-
-# Write configuration
-template "/etc/kafka/server.properties" do
-  source "properties.erb"
-  mode '644'
-  variables :config => config
-end
-
-directory '/var/log/kafka' do
-  owner node['confluent-platform']['kafka']['user']
-  group node['confluent-platform']['kafka']['user']
-  mode '0755'
-  recursive true
-  action :create
-end
