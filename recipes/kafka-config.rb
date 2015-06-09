@@ -43,11 +43,13 @@ template "/etc/kafka/server.properties" do
   variables :config => config
 end
 
-# Set correct ownership to kafka log directory
-directory '/var/log/kafka' do
-  owner node['confluent-platform']['kafka']['user']
-  group node['confluent-platform']['kafka']['user']
-  mode '0755'
-  recursive true
-  action :create
+# Set correct ownership to kafka log directories
+[ '/var/log/kafka', '/var/lib/kafka' ].each do |dir|
+  directory dir do
+    owner node['confluent-platform']['kafka']['user']
+    group node['confluent-platform']['kafka']['user']
+    mode '0755'
+    recursive true
+    action :create
+  end
 end
