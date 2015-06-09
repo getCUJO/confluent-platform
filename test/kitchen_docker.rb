@@ -36,7 +36,9 @@ module Kitchen
 
       def rm_container(state)
         container_id = state[:container_id]
-        docker_command("exec #{container_id} shutdown now")
+        # Fix for kafka slowing the destroy
+        docker_command("exec #{container_id} systemctl kill kafka -s9 || true")
+        docker_command("exec #{container_id} systemctl halt")
         docker_command("wait #{container_id}") # Wait for shutdown
         docker_command("rm #{container_id}")
       end
