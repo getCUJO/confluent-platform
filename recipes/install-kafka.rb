@@ -72,3 +72,7 @@ template "/usr/lib/systemd/system/kafka.service" do
   source        "kafka.service.erb"
   notifies      :run, 'execute[systemd-reload]', :immediately
 end
+
+#Java is needed by Kafka, can install it with package
+java_package = node['confluent-platform']['java'][node[:platform]]
+package java_package if java_package != ""
