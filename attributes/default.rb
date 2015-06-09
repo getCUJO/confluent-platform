@@ -56,6 +56,20 @@ default['confluent-platform']['kafka']['config']      = {
   'zookeeper.connection.timeout.ms' => 6000
 }
 
+default['confluent-platform']['kafka']['heap_opts'] = '-Xmx1G -Xms1G'
+default['confluent-platform']['kafka']['performance_opts'] =
+  '-server -XX:+UseParNewGC -XX:+UseConcMarkSweepGC \
+  -XX:+CMSClassUnloadingEnabled -XX:+CMSScavengeBeforeRemark \
+  -XX:+DisableExplicitGC -Djava.awt.headless=true'
+default['confluent-platform']['kafka']['jmx_opts'] =
+  '-Dcom.sun.management.jmxremote \
+  -Dcom.sun.management.jmxremote.authenticate=false \
+  -Dcom.sun.management.jmxremote.ssl=false'
+default['confluent-platform']['kafka']['jmx_port'] = ''
+default['confluent-platform']['kafka']['extra_opts'] = ''
+
+default['confluent-platform']['kafka']['user'] = 'kafka'
+
 # Always use a chroot in Zookeeper
 default['confluent-platform']['kafka']['zk_chroot'] =
   "/#{node['confluent-platform']['kafka']['role']}"

@@ -1,0 +1,23 @@
+[Unit]
+Description=Kafka publish-subscribe messaging system
+After=network.target
+
+[Service]
+User=<%= @node['confluent-platform']['kafka']['user'] %>
+Group=<%= @node['confluent-platform']['kafka']['user'] %>
+SyslogIdentifier=kafka
+Restart=on-failure
+ExecStart=/usr/bin/java \
+  <%= @node['confluent-platform']['kafka']['heap_opts'] %> \
+  <%= @node['confluent-platform']['kafka']['performance_opts'] %> \
+  <%= @node['confluent-platform']['kafka']['jmx_opts'] %> \
+  <%= @jmx_port %> \
+  <%= @node['confluent-platform']['kafka']['extra_opts'] %> \
+  -Dkafka.logs.dir=/var/log/kafka \
+  -Dlog4j.configuration=file:/etc/kafka/log4j.properties \
+  -cp /usr/share/java/kafka/* \
+  kafka.Kafka \
+  /etc/kafka/server.properties
+
+[Install]
+WantedBy=multi-user.target

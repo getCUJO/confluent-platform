@@ -47,3 +47,20 @@ template "/etc/kafka/server.properties" do
   variables :config => config
 #  notifies :restart, "service[kafka]"
 end
+
+# Config for systemd service
+jmx_port = node['confluent-platform']['kafka']['jmx_port']
+jmx_port = "-Dcom.sun.management.jmxremote.port=#{jmx_port}" if jmx_port != ""
+
+# Install service file, reload systemd daemon if necessary
+execute "systemd-reload" do
+  command "systemctl daemon-reload"
+  action :nothing
+end
+
+template "/usr/lib/systemd/system/kafka.service" do
+  variables     :jmx_port => jmx_port
+  mode          "0644"
+  source        "kafka.service.erb"
+  notifies      :run, 'execute[systemd-reload]', :immediately
+end

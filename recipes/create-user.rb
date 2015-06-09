@@ -1,7 +1,7 @@
 #
 # Author:: Samuel Bernard (<samuel.bernard@s4m.io>)
 # Cookbook Name:: confluent-platform
-# Recipe:: default
+# Recipe:: create-user
 #
 # Copyright (c) 2015 Sam4Mobile
 #
@@ -18,6 +18,13 @@
 # limitations under the License.
 #
 
-include_recipe "#{cookbook_name}::repository"
-include_recipe "#{cookbook_name}::create-user"
-include_recipe "#{cookbook_name}::install-kafka"
+# Create confluent-service group & user
+group node['confluent-platform']['kafka']['user'] do
+end
+
+user node['confluent-platform']['kafka']['user'] do
+  gid node['confluent-platform']['kafka']['user']
+  shell '/bin/nologin'
+  system true
+  action :create
+end
