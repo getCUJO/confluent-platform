@@ -1,7 +1,7 @@
 #
 # Author:: Samuel Bernard (<samuel.bernard@s4m.io>)
 # Cookbook Name:: confluent-platform
-# Recipe:: create-user
+# Recipe:: kafka-user
 #
 # Copyright (c) 2015 Sam4Mobile
 #
@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-# Create confluent-service group & user
+# Create kafka group & user
 group node['confluent-platform']['kafka']['user'] do
 end
 
