@@ -1,7 +1,7 @@
 #
 # Author:: Samuel Bernard (<samuel.bernard@s4m.io>)
 # Cookbook Name:: kafka-cluster
-# Recipe:: install-kafka
+# Recipe:: kafka-package
 #
 # Copyright (c) 2015 Sam4Mobile
 #
@@ -18,9 +18,6 @@
 # limitations under the License.
 #
 
-# Stand-alone meta-recipe to install Kafka and configure it
-include_recipe "#{cookbook_name}::repository"
-include_recipe "#{cookbook_name}::kafka-package"
-include_recipe "#{cookbook_name}::kafka-user"
-include_recipe "#{cookbook_name}::kafka-config"
-include_recipe "#{cookbook_name}::kafka-service"
+# Install Kafka with configured scala version
+scala_version = node.attribute['confluent-platform']['scala_version']
+package "confluent-kafka-#{scala_version}"

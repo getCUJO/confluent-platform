@@ -18,6 +18,4 @@
 # limitations under the License.
 #
 
-include_recipe "#{cookbook_name}::repository"
-include_recipe "#{cookbook_name}::create-user"
 include_recipe "#{cookbook_name}::install-kafka"
