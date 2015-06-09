@@ -79,6 +79,19 @@ suites:
           > /usr/lib/systemd/system/dnsdock.service &&
           systemctl enable dnsdock
 
+  # Install a stand-alone zookeeper
+  - name: zookeeper
+    driver:
+      hostname: zookeeper-kafka.kitchen
+      instance_name: zookeeper-kafka
+    run_list:
+      - recipe[zookeeper-cluster]
+    attributes:
+      zookeeper-cluster:
+        hosts:
+          - zookeeper-kafka.kitchen
+
+  # True tests begin here
   - name: kafka-01
     driver:
       hostname: kafka-kitchen-01.kitchen
