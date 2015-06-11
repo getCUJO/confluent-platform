@@ -58,6 +58,11 @@ describe 'Kafka Configuration' do
     auto.create.topics.enable=true
     eos
   end
+
+  describe file('/etc/kafka/log4j.properties') do
+    its(:content) { should contain "log4j.rootLogger=INFO, stdout" }
+    its(:content) { should contain "# Kitchen=true" }
+  end
 end
 
 describe 'Kafka Cluster' do

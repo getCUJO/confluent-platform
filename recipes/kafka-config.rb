@@ -43,6 +43,13 @@ template "/etc/kafka/server.properties" do
   variables :config => config
 end
 
+template "/etc/kafka/log4j.properties" do
+  source "properties.erb"
+  mode '644'
+  variables :config => node['confluent-platform']['kafka']['log4j']
+end
+
+
 # Set correct ownership to kafka log directories
 [ '/var/log/kafka', '/var/lib/kafka' ].each do |dir|
   directory dir do
