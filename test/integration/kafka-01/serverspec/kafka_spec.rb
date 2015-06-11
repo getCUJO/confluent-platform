@@ -66,10 +66,7 @@ describe 'Kafka Configuration' do
 end
 
 describe 'Kafka Cluster' do
-  brokers = '--broker-list ' + %w(
-    kafka-kitchen-01.kitchen:9092
-    kafka-kitchen-02.kitchen:9092
-    kafka-kitchen-03.kitchen:9092).join(',')
+  brokers = [1,2,3].map {|i| "--broker-list kafka-kitchen-0#{i}.kitchen:9092"}
   zk = '--zookeeper zookeeper-kafka.kitchen/kafka-kitchen'
   topic = '--topic test'
   messages = %w(test_msg) * 6
@@ -79,10 +76,12 @@ describe 'Kafka Cluster' do
 
   it 'We be able to send message to topic "test"' do
     res = true
+    i = 0
     messages.each do |m|
       res &= system(
-        "echo #{m} | kafka-console-producer #{brokers} #{topic} #{fmute}"
+        "echo #{m} | kafka-console-producer #{brokers[i]} #{topic} #{fmute}"
       )
+      i = (i + 1) % 3
     end
     expect(res).to eq(true)
   end
