@@ -69,30 +69,28 @@ describe 'Kafka Cluster' do
   topic = '--topic test'
   messages = %w(test_msg) * 6
   copts = '--from-beginning --max-messages 6'
+  emute = '2> /dev/null'
+  fmute = '> /dev/null  2>&1'
 
   it 'We be able to send message to topic "test"' do
     res = true
     messages.each do |m|
-      res &= system("echo #{m} | kafka-console-producer #{brokers} #{topic}")
+      res &= system(
+        "echo #{m} | kafka-console-producer #{brokers} #{topic} #{fmute}"
+      )
     end
     expect(res).to eq(true)
   end
 
   it 'Topic "test" should have been created' do
-    expected = ["Topic:test", "PartitionCount:3", "ReplicationFactor:3",
-                "Configs:",
-                "Topic:", "test", "Partition:", "0", "Leader:", "3",
-                "Replicas:", "3,1,2", "Isr:", "3,1,2",
-                "Topic:", "test", "Partition:", "1", "Leader:", "1",
-                "Replicas:", "1,2,3", "Isr:", "1,2,3",
-                "Topic:", "test", "Partition:", "2", "Leader:", "2",
-                "Replicas:", "2,3,1", "Isr:", "2,3,1"]
-    topics = %x(kafka-topics --describe #{zk} #{topic}).split
+    expected = ["Topic:test", "PartitionCount:3", "ReplicationFactor:3"]
+    topics = %x(kafka-topics --describe #{zk} #{topic} #{emute}).split[0..2]
     expect(topics).to eq(expected)
   end
 
  it 'Topic "test" should contain the messages we sent' do
-    output = %x(kafka-console-consumer #{zk} #{topic} #{copts}).split.sort.uniq
-    expect(output).to eq(messages.sort.uniq)
+    output = %x(kafka-console-consumer #{zk} #{topic} #{copts} #{emute})
+    output = output.split.sort
+    expect(output).to eq(messages.sort)
   end
 end
