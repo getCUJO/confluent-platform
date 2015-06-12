@@ -138,3 +138,25 @@ default['confluent-platform']['kafka']['log4j'] = {
   'log4j.logger.state.change.logger' => 'TRACE, stateChangeAppender',
   'log4j.additivity.state.change.logger' => 'false'
 }
+
+# Schema Registry configuration
+default['confluent-platform']['registry']['user'] = 'registry'
+default['confluent-platform']['registry']['config'] = {
+  'port' => '8081',
+  'kafkastore.connection.url' => 'localhost:2181',
+  'kafkastore.topic' => '_schemas',
+  'debug' => 'false'
+}
+
+default['confluent-platform']['registry']['log4j'] = {
+  'log4j.rootLogger' => 'INFO, stdout',
+  'log4j.appender.stdout' => 'org.apache.log4j.ConsoleAppender',
+  'log4j.appender.stdout.layout' => 'org.apache.log4j.PatternLayout',
+  'log4j.appender.stdout.layout.ConversionPattern' => '[%d] %p %m (%c:%L)%n',
+  'log4j.logger.kafka' => 'ERROR, stdout',
+  'log4j.logger.org.apache.zookeeper' => 'ERROR, stdout',
+  'log4j.logger.org.apache.kafka' => 'ERROR, stdout',
+  'log4j.logger.org.I0Itec.zkclient' => 'ERROR, stdout',
+  'log4j.additivity.kafka.server' => 'false',
+  'log4j.additivity.kafka.consumer.ZookeeperConsumerConnector' => 'false'
+}
