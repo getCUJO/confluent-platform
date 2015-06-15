@@ -1,0 +1,28 @@
+{
+  "name": "registry-kitchen",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+    "confluent-platform": {
+      "zookeeper": {
+        "hosts": [
+          "zookeeper-kafka.kitchen"
+        ]
+      },
+      "registry": {
+        "config": {
+          "avro.compatibility.level": "backward"
+        }
+      }
+    }
+  },
+  "override_attributes": {
+
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[confluent-platform::install-registry]"
+  ],
+  "env_run_lists": {
+
+  }
+}

@@ -44,7 +44,6 @@ template "/etc/schema-registry/log4j.properties" do
   variables :config => node['confluent-platform']['registry']['log4j']
 end
 
-
 # Set correct ownership to kafka log directories
 [ '/var/log/schema-registry', '/var/lib/schema-registry' ].each do |dir|
   directory dir do

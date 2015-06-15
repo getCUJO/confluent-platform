@@ -114,3 +114,11 @@ suites:
       dns: $(<%= ip_of %> dnsdock-kafka)
     run_list:
       - role[kafka-kitchen]
+
+  - name: registry-01
+    driver:
+      hostname: registry-kitchen-01.kitchen
+      instance_name: registry-kitchen-01
+      dns: $(<%= ip_of %> dnsdock-kafka)
+    run_list:
+      - role[registry-kitchen]
