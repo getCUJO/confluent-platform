@@ -91,24 +91,26 @@ suites:
         hosts: zookeeper-kafka.kitchen
 
   # True tests begin here
+  # Set var ip_of to use it in dns settings
+  # <% ip_of = "docker inspect --format '{{.NetworkSettings.IPAddress}}'" %>
   - name: kafka-01
     driver:
       hostname: kafka-kitchen-01.kitchen
       instance_name: kafka-kitchen-01
-      dns: $(docker inspect --format '{{.NetworkSettings.IPAddress}}' dnsdock-kafka)
+      dns: $(<%= ip_of %> dnsdock-kafka)
     run_list:
       - role[kafka-kitchen]
   - name: kafka-02
     driver:
       hostname: kafka-kitchen-02.kitchen
       instance_name: kafka-kitchen-02
-      dns: $(docker inspect --format '{{.NetworkSettings.IPAddress}}' dnsdock-kafka)
+      dns: $(<%= ip_of %> dnsdock-kafka)
     run_list:
       - role[kafka-kitchen]
   - name: kafka-03
     driver:
       hostname: kafka-kitchen-03.kitchen
       instance_name: kafka-kitchen-03
-      dns: $(docker inspect --format '{{.NetworkSettings.IPAddress}}' dnsdock-kafka)
+      dns: $(<%= ip_of %> dnsdock-kafka)
     run_list:
       - role[kafka-kitchen]
