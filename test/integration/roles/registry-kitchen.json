@@ -14,6 +14,9 @@
       "registry": {
         "config": {
           "avro.compatibility.level": "backward"
+        },
+        "log4j": {
+          "# Kitchen": "true"
         }
       }
     }
