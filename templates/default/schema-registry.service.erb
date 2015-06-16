@@ -1,0 +1,22 @@
+[Unit]
+Description=Schema Registry provides a serving layer for your metadata
+After=network.target
+
+[Service]
+User=<%= @node['confluent-platform']['registry']['user'] %>
+Group=<%= @node['confluent-platform']['registry']['user'] %>
+SyslogIdentifier=schema-registry
+Restart=on-failure
+ExecStart=/usr/bin/java \
+  <%= @node['confluent-platform']['registry']['heap_opts'] %> \
+  <%= @node['confluent-platform']['registry']['performance_opts'] %> \
+  <%= @node['confluent-platform']['registry']['jmx_opts'] %> \
+  <%= @jmx_port %> \
+  <%= @node['confluent-platform']['registry']['extra_opts'] %> \
+  -Dlog4j.configuration=file:/etc/schema-registry/log4j.properties \
+  -cp /usr/share/java/confluent-common/*:/usr/share/java/rest-utils/*:/usr/share/java/schema-registry/* \
+  io.confluent.kafka.schemaregistry.rest.Main \
+  /etc/schema-registry/schema-registry.properties
+
+[Install]
+WantedBy=multi-user.target

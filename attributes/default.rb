@@ -77,7 +77,6 @@ default['confluent-platform']['kafka']['jmx_opts'] =
 default['confluent-platform']['kafka']['jmx_port'] = ''
 default['confluent-platform']['kafka']['extra_opts'] = ''
 
-
 # Kafka log4j configuration
 default['confluent-platform']['kafka']['log4j'] = {
   'kafka.logs.dir' => 'logs',
@@ -160,3 +159,16 @@ default['confluent-platform']['registry']['log4j'] = {
   'log4j.additivity.kafka.server' => 'false',
   'log4j.additivity.kafka.consumer.ZookeeperConsumerConnector' => 'false'
 }
+
+# Schema Registry jvm configuration
+default['confluent-platform']['registry']['heap_opts'] = '-Xmx256M -Xms256M'
+default['confluent-platform']['registry']['performance_opts'] =
+  '-server -XX:+UseParNewGC -XX:+UseConcMarkSweepGC \
+  -XX:+CMSClassUnloadingEnabled -XX:+CMSScavengeBeforeRemark \
+  -XX:+DisableExplicitGC -Djava.awt.headless=true'
+default['confluent-platform']['registry']['jmx_opts'] =
+  '-Dcom.sun.management.jmxremote \
+  -Dcom.sun.management.jmxremote.authenticate=false \
+  -Dcom.sun.management.jmxremote.ssl=false'
+default['confluent-platform']['registry']['jmx_port'] = ''
+default['confluent-platform']['registry']['extra_opts'] = ''

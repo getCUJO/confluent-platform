@@ -8,6 +8,9 @@
           "zookeeper-kafka.kitchen"
         ]
       },
+      "kafka": {
+        "role": "kafka-kitchen"
+      },
       "registry": {
         "config": {
           "avro.compatibility.level": "backward"
