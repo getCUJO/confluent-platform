@@ -1,0 +1,7 @@
+{
+  "id": "registry-kitchen-01.kitchen",
+  "automatic": {
+    "fqdn": "registry-kitchen-01.kitchen",
+    "roles": ["registry-kitchen"]
+  }
+}
