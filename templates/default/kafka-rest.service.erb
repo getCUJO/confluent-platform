@@ -1,0 +1,22 @@
+[Unit]
+Description=The Kafka REST Proxy provides a RESTful interface to a Kafka
+After=network.target
+
+[Service]
+User=<%= @node['confluent-platform']['rest']['user'] %>
+Group=<%= @node['confluent-platform']['rest']['user'] %>
+SyslogIdentifier=kafka-rest
+Restart=on-failure
+ExecStart=/usr/bin/java \
+  <%= @node['confluent-platform']['rest']['heap_opts'] %> \
+  <%= @node['confluent-platform']['rest']['performance_opts'] %> \
+  <%= @node['confluent-platform']['rest']['jmx_opts'] %> \
+  <%= @jmx_port %> \
+  <%= @node['confluent-platform']['rest']['extra_opts'] %> \
+  -Dlog4j.configuration=file:/etc/kafka-rest/log4j.properties \
+  -cp /usr/share/java/confluent-common/*:/usr/share/java/rest-utils/*:/usr/share/java/kafka-rest/* \
+  io.confluent.kafkarest.Main \
+  /etc/kafka-rest/kafka-rest.properties
+
+[Install]
+WantedBy=multi-user.target

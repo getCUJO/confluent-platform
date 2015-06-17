@@ -197,3 +197,16 @@ default['confluent-platform']['rest']['log4j'] = {
   'log4j.appender.stdout.layout' => 'org.apache.log4j.PatternLayout',
   'log4j.appender.stdout.layout.ConversionPattern' => '[%d] %p %m (%c:%L)%n'
 }
+
+# Kafka Rest jvm configuration
+default['confluent-platform']['rest']['heap_opts'] = '-Xmx256M -Xms256M'
+default['confluent-platform']['rest']['performance_opts'] =
+  '-server -XX:+UseParNewGC -XX:+UseConcMarkSweepGC \
+  -XX:+CMSClassUnloadingEnabled -XX:+CMSScavengeBeforeRemark \
+  -XX:+DisableExplicitGC -Djava.awt.headless=true'
+default['confluent-platform']['rest']['jmx_opts'] =
+  '-Dcom.sun.management.jmxremote \
+  -Dcom.sun.management.jmxremote.authenticate=false \
+  -Dcom.sun.management.jmxremote.ssl=false'
+default['confluent-platform']['rest']['jmx_port'] = ''
+default['confluent-platform']['rest']['extra_opts'] = ''
