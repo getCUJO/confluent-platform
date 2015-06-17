@@ -24,16 +24,17 @@
 # Get default configuration
 config = {}.merge! node['confluent-platform']['kafka']['config']
 
-# Search zookeeper cluster
+# Search Zookeeper cluster
 zookeeper = cluster_search(node['confluent-platform']['zookeeper'])
 return if zookeeper == nil # Not enough nodes
-zk_connection = zookeeper['hosts'].map { |h| h + ":2181" }.join(',')
-zk_connection += node['confluent-platform']['kafka']['zk_chroot']
+zk_connection = zookeeper['hosts'].map do |host|
+  host + ":2181" + node['confluent-platform']['kafka']['zk_chroot']
+end.join(',')
 config['zookeeper.connect'] = zk_connection
 
 # Search other Kafka
 kafka = cluster_search(node['confluent-platform']['kafka'])
-return if kafka == nil
+return if kafka == nil # Not enough nodes
 config['broker.id'] = kafka['my_id']
 
 # Write configuration
@@ -48,7 +49,6 @@ template "/etc/kafka/log4j.properties" do
   mode '644'
   variables :config => node['confluent-platform']['kafka']['log4j']
 end
-
 
 # Set correct ownership to kafka log directories
 [ '/var/log/kafka', '/var/lib/kafka' ].each do |dir|

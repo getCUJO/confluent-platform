@@ -24,11 +24,12 @@
 # Get default configuration
 config = {}.merge! node['confluent-platform']['registry']['config']
 
-# Search zookeeper cluster
+# Search Zookeeper cluster
 zookeeper = cluster_search(node['confluent-platform']['zookeeper'])
 return if zookeeper == nil # Not enough nodes
-zk_connection = zookeeper['hosts'].map { |h| h + ":2181" }.join(',')
-zk_connection += node['confluent-platform']['kafka']['zk_chroot']
+zk_connection = zookeeper['hosts'].map do |host|
+  host + ":2181" + node['confluent-platform']['kafka']['zk_chroot']
+end.join(',')
 config['kafkastore.connection.url'] = zk_connection
 
 # Write configuration
