@@ -11,9 +11,15 @@
       "kafka": {
         "role": "kafka-kitchen"
       },
+      "registry": {
+        "role": "registry-kitchen",
+        "size": 1
+      },
       "rest": {
+        "role": "rest-kitchen",
+        "size": 1,
         "config": {
-          "avro.compatibility.level": "backward"
+          "port": "8082"
         },
         "log4j": {
           "# Kitchen": "true"

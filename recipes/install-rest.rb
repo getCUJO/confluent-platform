@@ -22,5 +22,5 @@
 include_recipe "#{cookbook_name}::repository"
 include_recipe "#{cookbook_name}::rest-package"
 include_recipe "#{cookbook_name}::rest-user"
-#include_recipe "#{cookbook_name}::rest-config"
+include_recipe "#{cookbook_name}::rest-config"
 #include_recipe "#{cookbook_name}::rest-service"

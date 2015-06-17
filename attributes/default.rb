@@ -190,3 +190,10 @@ default['confluent-platform']['registry']['extra_opts'] = ''
 
 # Kafka Rest configuration
 default['confluent-platform']['rest']['user'] = 'rest'
+default['confluent-platform']['rest']['config'] = {}
+default['confluent-platform']['rest']['log4j'] = {
+  'log4j.rootLogger' => 'INFO, stdout',
+  'log4j.appender.stdout' => 'org.apache.log4j.ConsoleAppender',
+  'log4j.appender.stdout.layout' => 'org.apache.log4j.PatternLayout',
+  'log4j.appender.stdout.layout.ConversionPattern' => '[%d] %p %m (%c:%L)%n'
+}
