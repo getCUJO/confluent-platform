@@ -54,8 +54,8 @@ default['confluent-platform']['rest']['size']  = 3
 default['confluent-platform']['kafka']['zk_chroot'] =
   "/#{node['confluent-platform']['kafka']['role']}"
 
-# Kafka user
 default['confluent-platform']['kafka']['user'] = 'kafka'
+default['confluent-platform']['kafka']['auto_restart'] = 'true'
 
 # Kafka configuration, default provided by Kafka project
 default['confluent-platform']['kafka']['config']      = {
@@ -154,6 +154,7 @@ default['confluent-platform']['kafka']['log4j'] = {
 
 # Schema Registry configuration
 default['confluent-platform']['registry']['user'] = 'registry'
+default['confluent-platform']['registry']['auto_restart'] = 'true'
 default['confluent-platform']['registry']['config'] = {
   'port' => '8081',
   'kafkastore.connection.url' => 'localhost:2181',
@@ -190,6 +191,7 @@ default['confluent-platform']['registry']['extra_opts'] = ''
 
 # Kafka Rest configuration
 default['confluent-platform']['rest']['user'] = 'rest'
+default['confluent-platform']['rest']['auto_restart'] = 'true'
 default['confluent-platform']['rest']['config'] = {}
 default['confluent-platform']['rest']['log4j'] = {
   'log4j.rootLogger' => 'INFO, stdout',
