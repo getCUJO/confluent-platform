@@ -32,7 +32,9 @@ config['id'] = "kafka-rest-#{rest['my_id']}"
 # Search Schema Registry
 registry = cluster_search(node['confluent-platform']['registry'])
 return if registry == nil # Not enough nodes
-registry_connection = registry['hosts'].map { |h| h + ":2181" }.join(',')
+registry_connection = registry['hosts'].map do |host|
+  "http://#{host}:#{node['confluent-platform']['registry']['config']['port']}"
+end.join(',')
 config['schema.registry.url'] = registry_connection
 
 # Search Zookeeper cluster
