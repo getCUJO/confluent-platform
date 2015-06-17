@@ -36,7 +36,7 @@ template "/usr/lib/systemd/system/kafka.service" do
 end
 
 #Java is needed by Kafka, can install it with package
-java_package = node['confluent-platform']['java'][node[:platform]]
+java_package = node['confluent-platform']['java'][node['platform']]
 package java_package if !java_package.to_s.empty?
 
 # Configuration files to be subscribed
