@@ -36,9 +36,14 @@ module Kitchen
 
       def rm_container(state)
         container_id = state[:container_id]
-        # Fix for kafka slowing the destroy
-        docker_command("exec #{container_id} systemctl kill kafka -s9 || true")
-        docker_command("exec #{container_id} systemctl halt")
+        # Fix for slow destroy, systemctl half -f does not solve the problem
+        # If you have a better way, you're welcome
+        docker_command(<<-eos)
+        exec #{container_id} bash -c \
+          'systemctl list-units | grep running | grep -v systemd | \
+          cut -d\" \" -f1 | xargs systemctl -s9 kill 2> /dev/null & \
+          systemctl halt'
+        eos
         docker_command("wait #{container_id}") # Wait for shutdown
         docker_command("rm #{container_id}")
       end
