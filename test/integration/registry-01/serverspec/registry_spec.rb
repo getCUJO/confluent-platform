@@ -57,50 +57,56 @@ describe 'With Schema Registry Rest Interface' do
   header = '-H "Content-Type: application/vnd.schemaregistry.v1+json"'
   url = 'http://localhost:8081'
   data = '--data \'{"schema": "{\"type\": \"string\"}"}\''
+  schema_id = nil
 
   it 'We can register a new version of a schema under the subject "key"' do
     id = %x(#{curl} POST #{header} #{data} #{url}/subjects/key/versions)
-    expect(id).to eq('{"id":1}')
+    exp = /\{"id":(\d+)\}/
+    schema_id = exp.match(id)[1]
+    expect(schema_id).not_to be_nil
   end
 
   it 'We can register a new version of a schema under the subject "value"' do
     id = %x(#{curl} POST #{header} #{data} #{url}/subjects/value/versions)
-    expect(id).to eq('{"id":1}')
+    expect(id).to match(/\{"id":\d+\}/)
   end
 
   it 'We can list all subjects' do
-    subjects = eval(%x(#{curl} GET #{header} #{url}/subjects)).sort
-    expect(subjects).to eq(["key","value"])
+    subjects = %x(#{curl} GET #{header} #{url}/subjects)
+    expect(subjects).to include("key","value")
   end
 
   it 'We can list all schema versions registered under the subject "value"' do
     versions = %x(#{curl} GET #{header} #{url}/subjects/value/versions)
-    expect(versions).to eq('[1]')
+    expect(versions).to match(/\[(\d+,?)+\]/)
   end
 
-  it 'We can fetch a schema by globally unique id 1' do
-    schema = %x(#{curl} GET #{header} #{url}/schemas/ids/1)
-    expect(schema).to eq('{"schema":"\"string\""}')
+  it "We can fetch a schema by its global unique id" do
+    expect(schema_id).not_to be_nil
+    if schema_id != nil
+      schema = %x(#{curl} GET #{header} #{url}/schemas/ids/#{schema_id})
+      expect(schema).to eq('{"schema":"\"string\""}')
+    end
   end
 
   it 'We can fetch version 1 of the schema registered under subject "value"' do
     schema = %x(#{curl} GET #{header} #{url}/subjects/value/versions/1)
-    expect(schema).to eq(
-      '{"subject":"value","version":1,"id":1,"schema":"\"string\""}'
+    expect(schema).to match(
+      /{"subject":"value","version":1,"id":\d+,"schema":"\\\"string\\\""}/
     )
   end
 
   it 'We can fetch the most recently registered "value" schema' do
     schema = %x(#{curl} GET #{header} #{url}/subjects/value/versions/latest)
-    expect(schema).to eq(
-      '{"subject":"value","version":1,"id":1,"schema":"\"string\""}'
+    expect(schema).to match(
+      /{"subject":"value","version":\d+,"id":\d+,"schema":"\\\"string\\\""}/
     )
   end
 
   it 'We can check whether a schema has been registered under subject "key"' do
     schema = %x(#{curl} POST #{header} #{data} #{url}/subjects/key)
-    expect(schema).to eq(
-      '{"subject":"key","version":1,"id":1,"schema":"\"string\""}'
+    expect(schema).to match(
+      /{"subject":"key","version":\d+,"id":\d+,"schema":"\\\"string\\\""}/
     )
   end
 
