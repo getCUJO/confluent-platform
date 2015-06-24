@@ -1,6 +1,5 @@
 {
   "id": "kafka-kitchen-01.kitchen",
-  "run_list": [ "role[kafka-kitchen]" ],
   "automatic": {
     "fqdn": "kafka-kitchen-01.kitchen",
     "roles": ["kafka-kitchen"]
