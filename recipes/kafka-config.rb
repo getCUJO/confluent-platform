@@ -22,7 +22,7 @@
 ::Chef::Recipe.send(:include, ClusterSearch)
 
 # Get default configuration
-config = {}.merge! node['confluent-platform']['kafka']['config']
+config = node['confluent-platform']['kafka']['config'].dup
 
 # Search Zookeeper cluster
 zookeeper = cluster_search(node['confluent-platform']['zookeeper'])

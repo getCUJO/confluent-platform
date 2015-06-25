@@ -22,7 +22,7 @@
 ::Chef::Recipe.send(:include, ClusterSearch)
 
 # Get default configuration
-config = {}.merge! node['confluent-platform']['rest']['config']
+config = node['confluent-platform']['rest']['config'].dup
 
 # Search other Kafka Rest
 rest = cluster_search(node['confluent-platform']['rest'])
