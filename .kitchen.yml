@@ -17,8 +17,13 @@
 # limitations under the License.
 #
 ---
-# <% load "#{File.dirname(__FILE__)}/test/kitchen_command.rb" %>
-# <% load "#{File.dirname(__FILE__)}/test/kitchen_docker.rb" %>
+# Customize Kitchen with some monkey patching:
+# - Suites scheduler
+#   <% require "#{File.dirname(__FILE__)}/test/kitchen_command.rb" %>
+# - nodes generation from suites definition
+#   <% require "#{File.dirname(__FILE__)}/test/kitchen_sandbox.rb" %>
+# - improve login and destroy with docker driver (depend on systemd)
+#   <% require "#{File.dirname(__FILE__)}/test/kitchen_docker.rb" %>
 
 driver:
   name: docker

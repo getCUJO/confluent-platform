@@ -17,6 +17,10 @@
 # limitations under the License.
 #
 
+# Monkey patch RunAction to create a suites scheduler that consider
+# - dnsdock
+# - each suite is a different node
+
 require 'kitchen/command'
 
 module Kitchen
@@ -26,6 +30,10 @@ module Kitchen
       alias_method :run_action_official, :run_action
 
       def run_action(action, instances, *args)
+        # Define suites as global so we can use them to generates nodes
+        # in CommonSandbox
+        $suites = @config.send(:data).suite_data
+
         # Extract dnsdock instance(s) to be able to launch it first
         # so it is ready for other containers
         dnsdocks = instances.select {|i| i.suite.name.include? "dnsdock" }

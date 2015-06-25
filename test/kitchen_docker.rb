@@ -22,6 +22,10 @@
 # limitations under the License.
 #
 
+# Monkey patch kitchen-docker:
+# - use docker login instead of ssh
+# - improve destroy time when systemd is used inside docker
+
 require 'kitchen/driver/docker'
 
 module Kitchen

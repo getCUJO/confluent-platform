@@ -1,7 +1,0 @@
-{
-  "id": "kafka-kitchen-02.kitchen",
-  "automatic": {
-    "fqdn": "kafka-kitchen-02.kitchen",
-    "roles": ["kafka-kitchen"]
-  }
-}
