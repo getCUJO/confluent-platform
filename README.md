@@ -33,6 +33,12 @@ Default recipe does nothing. Each service **Kafka**, **Schema Registry** or
 [install-registry](recipes/install-registry.rb) and
 [install-rest](recipes/install-rest.rb).
 
+By default, this cookbook installs *openjdk* from the official repositories
+*(openjdk 8 on centos 7)* in **services** recipe, just before
+launching the service. You can deactivate this behavior by setting
+`node['confluent-platform']['java']` to `""`, or choose your package by setting
+the package name in `node['confluent-platform']['java'][node[:platform]]`.
+
 ### Search
 
 The recommended way to use this cookbook is through the creation of a different
@@ -158,9 +164,9 @@ or other nodes of the same cluster) with the help of cluster-search cookbook.
 
 Install systemd unit for the given *service*, then enable and start it.
 
-Note: install *java* package by default, can be disable by setting
-`node['confluent-platform']['java']` to nil, "" or false. A platform specific
-configuration is also possible.
+Note: install *java* package (OpenJDK 8 on centos 7) by default, can be
+disabled by setting `node['confluent-platform']['java']` to "". A platform
+specific configuration for the package to install is also possible.
 
 Resources/Providers
 -------------------
