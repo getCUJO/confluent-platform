@@ -27,7 +27,7 @@
   },
   "chef_type": "role",
   "run_list": [
-    "recipe[confluent-platform::default]"
+    "recipe[confluent-platform::install-kafka]"
   ],
   "env_run_lists": {
 
