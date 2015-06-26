@@ -10,7 +10,7 @@ system. It is widely adopted for use cases ranging from collecting user
 activity data, logs, application metrics, stock ticker data, and device
 instrumentation. Its key strength is its ability to make high volume data
 available as a real-time stream for consumption in systems with very different
-requirements—from batch systems like Hadoop, to realtime systems that require
+requirements—from batch systems like Hadoop, to real-time systems that require
 low-latency access, to stream processing engines that transform the data
 streams as they arrive.
 
@@ -19,32 +19,61 @@ transmitting messages to all the different systems and applications within your
 company. Learn more on <http://confluent.io>.
 
 This cookbook focuses on deploying Confluent Platform elements on your clusters
-via Chef on *systemd* managed distributions.
+via Chef on *systemd* managed distributions. At the moment, this includes
+**Kafka**, **Schema Registry** and **Kafka Rest**.
 
 Usage
 -----
 
 ### Easy Setup
 
+Default recipe does nothing. Each service **Kafka**, **Schema Registry** or
+**Kafka Rest** will be installed by calling respectively recipe
+[install-kafka](recipes/install-kafka.rb),
+[install-registry](recipes/install-registry.rb) and
+[install-rest](recipes/install-rest.rb).
 
 ### Search
 
+The recommended way to use this cookbook is through the creation of a different
+role per cluster, that is a role for **Kafka**, **Schema Registry** and
+**Kafka Rest**. This enables the search by role feature, allowing a simple
+service discovery.
+
+See [roles](test/integration/roles) for some examples and *Cluster Search*
+documentation for more information.
 
 ### Test
 
-This cookbook is fully tested through the installation of a working 3-nodes
-cluster in docker hosts. This uses kitchen, docker and some monkey-patching.
+This cookbook is fully tested through the installation of the full platform
+in docker hosts. This uses kitchen, docker and some monkey-patching.
 
-For more information, see *.kitchen.yml* and *test* directory.
+If you run `kitchen list`, you will see 7 suites:
+- dnsdock-centos-7
+- zookeeper-centos-7
+- kafka-01-centos-7
+- kafka-02-centos-7
+- kafka-03-centos-7
+- registry-01-centos-7
+- rest-01-centos-7
+
+Each corresponds to a different node in the cluster.
+
+For more information, see [.kitchen.yml](.kitchen.yml) and [test](test)
+directory.
 
 ### Local cluster
 
-You can also use this cookbook to install a kafka cluster locally. By
-running `kitchen converge`, you will have a 3-nodes cluster available on your
-workstation, each in its own docker host.
+Of course, the cluster you install by running `kitchen converge` is fully
+working so you can use it as a local cluster to test your development (like a
+new Kafka client). Moreover, compared to a single node cluster usually
+installed on workstations, you can detected partition/timing/fault-tolerance
+issues you could not because of the simplicity of a single-node system.
 
-You can access it by first adding dnsdock to your `/etc/resolv.conf` whose ip
-is: `docker inspect --format '{{.NetworkSettings.IPAddress}}' dnsdock-kafka`
+You can access it by adding the dnsdock used in the cluster as your main DNS
+resolver: add
+`docker inspect --format '{{.NetworkSettings.IPAddress}}' dnsdock-kafka`
+in `/etc/resolv.conf`.
 
 Then to produce some messages:
 
@@ -59,6 +88,9 @@ And to read them:
       --topic my_topic \
       --from-beginning
 
+Or you can use Rest API with http://rest-kitchen-01.kitchen:8082 and full
+Schema Registry support, located at http://registry-kitchen-01.kitchen:8081.
+
 Changes
 -------
 
@@ -71,17 +103,11 @@ Requirements
 
 ### Cookbooks
 
-From <https://supermarket.chef.io>:
-- cluster-search
-- yum
+Declared in [metadata.rb](metadata.rb).
 
 ### Gems
 
-From <https://rubygems.org>:
-
-- berkshelf
-- test-kitchen
-- kitchen-docker
+Declared in [Gemfile](Gemfile).
 
 ### Platforms
 
@@ -94,37 +120,47 @@ allow systemd to work easily, so it could not be tested.
 Attributes
 ----------
 
+Configuration is done by overriding default attributes. All configuration keys
+have a default defined in [attributes/default.rb](attributes/default.rb).
+Please read it to have a comprehensive view of what and how you can configure
+this cookbook behavior.
+
 Recipes
 -------
 
 ### default
 
+Does nothing.
+
 ### repository
 
 Configure confluent repository.
 
-### install-kafka
+### install-*service*
 
-Install and fully configure Kafka by running *repository*, *kafka-package*,
-*kafka-user*, *kafka-config* and *kafka-service*, in that order.
+Install and fully configure a given *service* by running *repository* and its
+4 dedicated recipes: *package*, *user*, *config* and *service*, in that order.
 
-### kafka-package
+### *service*-package
 
-Install kafka from confluent repository.
+Install given *service* from confluent repository.
 
-### kafka-user
+### *service*-user
 
-Create kafka system user and group.
+Create given *service* system user and group.
 
-### kafka-config
+### *service*-config
 
-Generate kafka configuration, search for a zookeeper cluster and other kafka
-nodes thanks to cluster-search cookbook.
+Generate *service* configuration. May search for dependencies (like Zookeeper
+or other nodes of the same cluster) with the help of cluster-search cookbook.
 
-### kafka-service
+### *service*-service
 
-Install kafka service for systemd, enable and start it. Install *java* package
-by default.
+Install systemd unit for the given *service*, then enable and start it.
+
+Note: install *java* package by default, can be disable by setting
+`node['confluent-platform']['java']` to nil, "" or false. A platform specific
+configuration is also possible.
 
 Resources/Providers
 -------------------
