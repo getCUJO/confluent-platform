@@ -1,6 +1,6 @@
 #
 # Author:: Samuel Bernard (<samuel.bernard@s4m.io>)
-# Cookbook Name:: kafka-cluster
+# Cookbook Name:: confluent-platform
 # Recipe:: kafka-service
 #
 # Copyright (c) 2015 Sam4Mobile
@@ -34,10 +34,6 @@ template "/usr/lib/systemd/system/kafka.service" do
   source        "kafka.service.erb"
   notifies      :run, 'execute[systemd-reload]', :immediately
 end
-
-#Java is needed by Kafka, can install it with package
-java_package = node['confluent-platform']['java'][node['platform']]
-package java_package if !java_package.to_s.empty?
 
 # Configuration files to be subscribed
 if node['confluent-platform']['kafka']['auto_restart']

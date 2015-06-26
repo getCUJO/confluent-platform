@@ -1,7 +1,7 @@
 #
 # Author:: Samuel Bernard (<samuel.bernard@s4m.io>)
 # Cookbook Name:: confluent-platform
-# Recipe:: kafka-package
+# Recipe:: java
 #
 # Copyright (c) 2015 Sam4Mobile
 #
@@ -18,6 +18,6 @@
 # limitations under the License.
 #
 
-# Install Kafka with configured scala version
-scala_version = node.attribute['confluent-platform']['scala_version']
-package "confluent-kafka-#{scala_version}"
+#Java is needed by all components of confluent. We may install it with package
+java_package = node['confluent-platform']['java'][node['platform']]
+package java_package if !java_package.to_s.empty?

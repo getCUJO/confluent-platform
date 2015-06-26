@@ -1,6 +1,6 @@
 #
 # Author:: Samuel Bernard (<samuel.bernard@s4m.io>)
-# Cookbook Name:: kafka-cluster
+# Cookbook Name:: confluent-platform
 # Recipe:: kafka-config
 #
 # Copyright (c) 2015 Sam4Mobile

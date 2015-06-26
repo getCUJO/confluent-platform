@@ -1,6 +1,6 @@
 #
 # Author:: Samuel Bernard (<samuel.bernard@s4m.io>)
-# Cookbook Name:: kafka-cluster
+# Cookbook Name:: confluent-platform
 # Recipe:: install-registry
 #
 # Copyright (c) 2015 Sam4Mobile
@@ -23,4 +23,5 @@ include_recipe "#{cookbook_name}::repository"
 include_recipe "#{cookbook_name}::registry-package"
 include_recipe "#{cookbook_name}::registry-user"
 include_recipe "#{cookbook_name}::registry-config"
+include_recipe "#{cookbook_name}::java"
 include_recipe "#{cookbook_name}::registry-service"
