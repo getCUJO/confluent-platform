@@ -87,9 +87,9 @@ suites:
       hostname: zookeeper-kafka.kitchen
       instance_name: zookeeper-kafka
     run_list:
-      - recipe[zookeeper-cluster]
+      - recipe[zookeeper-platform]
     attributes:
-      zookeeper-cluster:
+      zookeeper-platform:
         hosts: zookeeper-kafka.kitchen
 
   # True tests begin here
