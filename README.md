@@ -97,13 +97,6 @@ And to read them:
 Or you can use Rest API with http://rest-kitchen-01.kitchen:8082 and full
 Schema Registry support, located at http://registry-kitchen-01.kitchen:8081.
 
-Changes
--------
-
-### 1.0.0:
-
-- Initial version with Centos 7 support
-
 Requirements
 ------------
 
@@ -172,6 +165,21 @@ Resources/Providers
 -------------------
 
 None.
+
+Changes
+-------
+
+### 1.1.0:
+
+- Cleaning, use only dependencies from supermarket
+
+### 1.0.1:
+
+- Set java-1.8.0-openjdk-headless as default java package
+
+### 1.0.0:
+
+- Initial version with Centos 7 support
 
 Contributing
 ------------
