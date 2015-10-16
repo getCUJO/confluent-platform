@@ -1,12 +1,4 @@
 #
-# Author:: Samuel Bernard (<samuel.bernard@s4m.io>)
-# Special thanks to Shane da Silva for:
-# https://medium.com/brigade-engineering/\
-#       reduce-chef-infrastructure-integration-test-times-by-75\
-#       -with-test-kitchen-and-docker-bf638ab95a0a
-#
-# Cookbook Name:: confluent-platform
-#
 # Copyright (c) 2015 Sam4Mobile
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +17,11 @@
 # Monkey patch kitchen-docker:
 # - use docker login instead of ssh
 # - improve destroy time when systemd is used inside docker
+#
+# Special thanks to Shane da Silva for:
+# https://medium.com/brigade-engineering/\
+#       reduce-chef-infrastructure-integration-test-times-by-75\
+#       -with-test-kitchen-and-docker-bf638ab95a0a
 
 require 'kitchen/driver/docker'
 

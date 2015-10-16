@@ -1,8 +1,4 @@
 #
-# Author:: Samuel Bernard (<samuel.bernard@s4m.io>)
-# Cookbook Name:: confluent-platform
-# Recipe:: repository
-#
 # Copyright (c) 2015 Sam4Mobile
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
