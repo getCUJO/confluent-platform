@@ -18,7 +18,7 @@
 ::Chef::Recipe.send(:include, ClusterSearch)
 
 # Get default configuration
-config = node['confluent-platform']['registry']['config'].dup
+config = node['confluent-platform']['registry']['config'].to_hash
 
 # Search Zookeeper cluster
 zookeeper = cluster_search(node['confluent-platform']['zookeeper'])
