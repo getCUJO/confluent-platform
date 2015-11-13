@@ -7,6 +7,9 @@ User=<%= @node['confluent-platform']['rest']['user'] %>
 Group=<%= @node['confluent-platform']['rest']['user'] %>
 SyslogIdentifier=kafka-rest
 Restart=on-failure
+<% cp = [ 'confluent-common','rest-utils', 'kafka-rest' ].map do |path| %>
+  <% "/usr/share/java/#{path}/*" %>
+<% end %>
 ExecStart=/usr/bin/java \
   <%= @node['confluent-platform']['rest']['heap_opts'] %> \
   <%= @node['confluent-platform']['rest']['performance_opts'] %> \
@@ -14,7 +17,7 @@ ExecStart=/usr/bin/java \
   <%= @jmx_port %> \
   <%= @node['confluent-platform']['rest']['extra_opts'] %> \
   -Dlog4j.configuration=file:/etc/kafka-rest/log4j.properties \
-  -cp /usr/share/java/confluent-common/*:/usr/share/java/rest-utils/*:/usr/share/java/kafka-rest/* \
+  -cp <%= cp.join(':') %> \
   io.confluent.kafkarest.Main \
   /etc/kafka-rest/kafka-rest.properties
 

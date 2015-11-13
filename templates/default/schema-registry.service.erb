@@ -7,6 +7,9 @@ User=<%= @node['confluent-platform']['registry']['user'] %>
 Group=<%= @node['confluent-platform']['registry']['user'] %>
 SyslogIdentifier=schema-registry
 Restart=on-failure
+<% cp = [ 'confluent-common','rest-utils', 'schema-registry' ].map do |path| %>
+  <% "/usr/share/java/#{path}/*" %>
+<% end %>
 ExecStart=/usr/bin/java \
   <%= @node['confluent-platform']['registry']['heap_opts'] %> \
   <%= @node['confluent-platform']['registry']['performance_opts'] %> \
@@ -14,7 +17,7 @@ ExecStart=/usr/bin/java \
   <%= @jmx_port %> \
   <%= @node['confluent-platform']['registry']['extra_opts'] %> \
   -Dlog4j.configuration=file:/etc/schema-registry/log4j.properties \
-  -cp /usr/share/java/confluent-common/*:/usr/share/java/rest-utils/*:/usr/share/java/schema-registry/* \
+  -cp <%= cp.join(':') %> \
   io.confluent.kafka.schemaregistry.rest.Main \
   /etc/schema-registry/schema-registry.properties
 
