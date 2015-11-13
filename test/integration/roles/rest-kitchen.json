@@ -1,5 +1,5 @@
 {
-  "name": "registry-kitchen",
+  "name": "rest-kitchen",
   "json_class": "Chef::Role",
   "default_attributes": {
     "confluent-platform": {
