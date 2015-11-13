@@ -166,20 +166,10 @@ Resources/Providers
 
 None.
 
-Changes
--------
+Changelog
+---------
 
-### 1.1.0:
-
-- Cleaning, use only dependencies from supermarket
-
-### 1.0.1:
-
-- Set java-1.8.0-openjdk-headless as default java package
-
-### 1.0.0:
-
-- Initial version with Centos 7 support
+Available in [CHANGELOG](CHANGELOG).
 
 Contributing
 ------------
