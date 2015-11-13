@@ -11,11 +11,10 @@ Restart=on-failure
   <% "/usr/share/java/#{path}/*" %>
 <% end %>
 ExecStart=/usr/bin/java \
-  <%= @node['confluent-platform']['registry']['heap_opts'] %> \
-  <%= @node['confluent-platform']['registry']['performance_opts'] %> \
-  <%= @node['confluent-platform']['registry']['jmx_opts'] %> \
-  <%= @jmx_port %> \
-  <%= @node['confluent-platform']['registry']['extra_opts'] %> \
+<% @node['confluent-platform']['registry']['jvm_opts'].merge(
+  @node['confluent-platform']['registry']['jmx_opts']).each do |key, value| %>
+  <%= key %><% unless value.nil? %>=<%= value %><% end %> \
+<% end %>
   -Dlog4j.configuration=file:/etc/schema-registry/log4j.properties \
   -cp <%= cp.join(':') %> \
   io.confluent.kafka.schemaregistry.rest.Main \

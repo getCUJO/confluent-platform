@@ -70,18 +70,23 @@ default['confluent-platform']['kafka']['config']      = {
   'zookeeper.connection.timeout.ms' => 6000
 }
 
-# Kafka jvm configuration
-default['confluent-platform']['kafka']['heap_opts'] = '-Xmx1G -Xms1G'
-default['confluent-platform']['kafka']['performance_opts'] =
-  '-server -XX:+UseParNewGC -XX:+UseConcMarkSweepGC \
-  -XX:+CMSClassUnloadingEnabled -XX:+CMSScavengeBeforeRemark \
-  -XX:+DisableExplicitGC -Djava.awt.headless=true'
-default['confluent-platform']['kafka']['jmx_opts'] =
-  '-Dcom.sun.management.jmxremote \
-  -Dcom.sun.management.jmxremote.authenticate=false \
-  -Dcom.sun.management.jmxremote.ssl=false'
-default['confluent-platform']['kafka']['jmx_port'] = ''
-default['confluent-platform']['kafka']['extra_opts'] = ''
+# Kafka JVM configuration
+default['confluent-platform']['kafka']['jvm_opts'] = {
+  '-Xms4g' => nil,
+  '-Xmx4g' => nil,
+  '-XX:+UseG1GC' => nil,
+  '-XX:MaxGCPauseMillis' => 20,
+  '-XX:InitiatingHeapOccupancyPercent' => 35
+}
+
+# Kafka JMX configuration
+default['confluent-platform']['kafka']['jmx_opts'] = {
+  '-Dcom.sun.management.jmxremote' => nil,
+  '-Dcom.sun.management.jmxremote.authenticate' => false,
+  '-Dcom.sun.management.jmxremote.ssl' => false,
+  '-Dcom.sun.management.jmxremote.port' => 8090,
+  '-Djava.rmi.server.hostname' => node['fqdn']
+}
 
 # Kafka log4j configuration
 default['confluent-platform']['kafka']['log4j'] = {
@@ -168,19 +173,23 @@ default['confluent-platform']['registry']['log4j'] = {
   'log4j.additivity.kafka.consumer.ZookeeperConsumerConnector' => 'false'
 }
 
-# Schema Registry jvm configuration
-default['confluent-platform']['registry']['heap_opts'] = '-Xmx256M -Xms256M'
-default['confluent-platform']['registry']['performance_opts'] =
-  '-server -XX:+UseParNewGC -XX:+UseConcMarkSweepGC \
-  -XX:+CMSClassUnloadingEnabled -XX:+CMSScavengeBeforeRemark \
-  -XX:+DisableExplicitGC -Djava.awt.headless=true'
-default['confluent-platform']['registry']['jmx_opts'] =
-  '-Dcom.sun.management.jmxremote \
-  -Dcom.sun.management.jmxremote.authenticate=false \
-  -Dcom.sun.management.jmxremote.ssl=false'
-default['confluent-platform']['registry']['jmx_port'] = ''
-default['confluent-platform']['registry']['extra_opts'] = ''
+# Schema Registry JVM configuration
+default['confluent-platform']['registry']['jvm_opts'] = {
+  '-Xms1g' => nil,
+  '-Xmx1g' => nil,
+  '-XX:+UseG1GC' => nil,
+  '-XX:MaxGCPauseMillis' => 20,
+  '-XX:InitiatingHeapOccupancyPercent' => 35
+}
 
+# Schema Registry JMX configuration
+default['confluent-platform']['registry']['jmx_opts'] = {
+  '-Dcom.sun.management.jmxremote' => nil,
+  '-Dcom.sun.management.jmxremote.authenticate' => false,
+  '-Dcom.sun.management.jmxremote.ssl' => false,
+  '-Dcom.sun.management.jmxremote.port' => 8091,
+  '-Djava.rmi.server.hostname' => node['fqdn']
+}
 
 # Kafka Rest configuration
 default['confluent-platform']['rest']['user'] = 'rest'
@@ -193,15 +202,20 @@ default['confluent-platform']['rest']['log4j'] = {
   'log4j.appender.stdout.layout.ConversionPattern' => '[%d] %p %m (%c:%L)%n'
 }
 
-# Kafka Rest jvm configuration
-default['confluent-platform']['rest']['heap_opts'] = '-Xmx256M -Xms256M'
-default['confluent-platform']['rest']['performance_opts'] =
-  '-server -XX:+UseParNewGC -XX:+UseConcMarkSweepGC \
-  -XX:+CMSClassUnloadingEnabled -XX:+CMSScavengeBeforeRemark \
-  -XX:+DisableExplicitGC -Djava.awt.headless=true'
-default['confluent-platform']['rest']['jmx_opts'] =
-  '-Dcom.sun.management.jmxremote \
-  -Dcom.sun.management.jmxremote.authenticate=false \
-  -Dcom.sun.management.jmxremote.ssl=false'
-default['confluent-platform']['rest']['jmx_port'] = ''
-default['confluent-platform']['rest']['extra_opts'] = ''
+# Kafka Rest JVM configuration
+default['confluent-platform']['rest']['jvm_opts'] = {
+  '-Xms1g' => nil,
+  '-Xmx1g' => nil,
+  '-XX:+UseG1GC' => nil,
+  '-XX:MaxGCPauseMillis' => 20,
+  '-XX:InitiatingHeapOccupancyPercent' => 35
+}
+
+# Kafka Rest JMX configuration
+default['confluent-platform']['rest']['jmx_opts'] = {
+  '-Dcom.sun.management.jmxremote' => nil,
+  '-Dcom.sun.management.jmxremote.authenticate' => false,
+  '-Dcom.sun.management.jmxremote.ssl' => false,
+  '-Dcom.sun.management.jmxremote.port' => 8092,
+  '-Djava.rmi.server.hostname' => node['fqdn']
+}

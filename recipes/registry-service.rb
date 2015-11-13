@@ -14,10 +14,6 @@
 # limitations under the License.
 #
 
-# Config for systemd service
-jmx_port = node['confluent-platform']['registry']['jmx_port']
-jmx_port = "-Dcom.sun.management.jmxremote.port=#{jmx_port}" if jmx_port != ""
-
 # Install service file, reload systemd daemon if necessary
 execute "systemd-reload" do
   command "systemctl daemon-reload"
@@ -25,7 +21,6 @@ execute "systemd-reload" do
 end
 
 template "/usr/lib/systemd/system/schema-registry.service" do
-  variables     :jmx_port => jmx_port
   mode          "0644"
   source        "schema-registry.service.erb"
   notifies      :run, 'execute[systemd-reload]', :immediately
