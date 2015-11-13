@@ -36,18 +36,16 @@ platforms:
       volume: /sys/fs/cgroup:/sys/fs/cgroup:ro
       privileged: true
       run_command: /usr/sbin/init # Start systemd as root process
+      # general provisionning for kitchen
       require_chef_omnibus: false
       provision_command:
         - >
           curl -L https://www.getchef.com/chef/install.sh | bash &&
-          yum install -y hostname
-        - >
           GEM_HOME=/tmp/verifier/gems GEM_PATH=/tmp/verifier/gems
           GEM_CACHE=/tmp/verifier/gems/cache
           /opt/chef/embedded/bin/gem install
           thor busser busser-serverspec serverspec bundler &&
           chown -R kitchen:kitchen /tmp/verifier
-        - yum install -y net-tools patch make automake autoconf gcc
 
 suites:
   # Use dnsdock to provide a container name resolution
@@ -60,11 +58,9 @@ suites:
         - /sys/fs/cgroup:/sys/fs/cgroup:ro
         - /var/run/docker.sock:/opt/run/docker.sock:ro
       provision_command:
-        - >
+        - > # Everything needed to make dnsdock work in kitchen
           curl -L https://www.getchef.com/chef/install.sh | bash &&
-          yum install -y hostname
-        - >
-          yum install -y go tar git &&
+          yum install -y go tar git hostname &&
           mkdir -p /opt/go &&
           export GOPATH=/opt/go && export PATH=$PATH:/opt/go/bin &&
           go get -v github.com/tools/godep &&
