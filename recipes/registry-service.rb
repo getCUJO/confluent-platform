@@ -42,10 +42,17 @@ if node['confluent-platform']['registry']['auto_restart']
 else config_files = []
 end
 
+# Because registry takes time to start, we wait a bit so further tests pass
+execute "sleep" do
+  command "sleep 15"
+  action :nothing
+end
+
 # Enable/Start service
 service "schema-registry" do
   provider Chef::Provider::Service::Systemd
   supports :status => true, :restart => true
   action [ :enable, :start ]
   subscribes :restart, config_files
+  notifies :run, 'execute[sleep]', :delayed
 end
