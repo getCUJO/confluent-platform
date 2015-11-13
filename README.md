@@ -22,6 +22,21 @@ This cookbook focuses on deploying Confluent Platform elements on your clusters
 via Chef on *systemd* managed distributions. At the moment, this includes
 **Kafka**, **Schema Registry** and **Kafka Rest**.
 
+Requirements
+------------
+
+### Cookbooks and gems
+
+Declared in [metadata.rb](metadata.rb) and in [Gemfile](Gemfile).
+
+### Platforms
+
+A *systemd* managed distribution:
+- RHEL Family 7, tested on Centos
+
+Note: it should work fine on Debian 8 but the official docker image does not
+allow systemd to work easily, so it could not be tested.
+
 Usage
 -----
 
@@ -96,25 +111,6 @@ And to read them:
 
 Or you can use Rest API with http://rest-kitchen-01.kitchen:8082 and full
 Schema Registry support, located at http://registry-kitchen-01.kitchen:8081.
-
-Requirements
-------------
-
-### Cookbooks
-
-Declared in [metadata.rb](metadata.rb).
-
-### Gems
-
-Declared in [Gemfile](Gemfile).
-
-### Platforms
-
-A *systemd* managed distribution:
-- RHEL Family 7, tested on Centos
-
-Note: it should work fine on Debian 8 but the official docker image does not
-allow systemd to work easily, so it could not be tested.
 
 Attributes
 ----------
