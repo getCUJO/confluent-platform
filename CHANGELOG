@@ -1,6 +1,32 @@
 Changelog
 =========
 
+1.2.0
+-----
+
+Main:
+- Clarify and fix JVM options for services
+- Use to_hash instead of dup to work on node values
+- Improve readibility of default system user names
+
+Fixes:
+- Fix and clean the creation of Kafka work directories
+- Fix zookeeper.connect chroot path
+
+Test:
+- Rationalize docker provision to limit images
+- Fix typo in roles/rest-kitchen.json name
+- Wait 15s after registry start to strengthen tests
+
+Packaging:
+- Reorganize README:
+  + Move changelog from README to CHANGELOG
+  + Move contribution guide to CONTRIBUTING.md
+  + Reorder README, fix Gemfile missing
+- Add Apache 2 license file
+- Add missing chefignore
+- Fix long lines in rest and registry templates
+
 1.1.0
 -----
 
