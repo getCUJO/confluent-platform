@@ -37,8 +37,8 @@ config['schema.registry.url'] = registry_connection
 zookeeper = cluster_search(node['confluent-platform']['zookeeper'])
 return if zookeeper == nil # Not enough nodes
 zk_connection = zookeeper['hosts'].map do |host|
-  host + ":2181" + node['confluent-platform']['kafka']['zk_chroot']
-end.join(',')
+  host + ":2181"
+end.join(',') + node['confluent-platform']['kafka']['zk_chroot']
 config['zookeeper.connect'] = zk_connection
 
 # Write configuration
