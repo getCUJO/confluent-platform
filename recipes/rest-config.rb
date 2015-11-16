@@ -53,14 +53,3 @@ template "/etc/kafka-rest/log4j.properties" do
   mode '644'
   variables :config => node['confluent-platform']['rest']['log4j']
 end
-
-# Set correct ownership to kafka log directories
-[ '/var/log/kafka-rest', '/var/lib/kafka-rest' ].each do |dir|
-  directory dir do
-    owner node['confluent-platform']['rest']['user']
-    group node['confluent-platform']['rest']['user']
-    mode '0755'
-    recursive true
-    action :create
-  end
-end

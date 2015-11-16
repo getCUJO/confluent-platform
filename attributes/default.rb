@@ -90,7 +90,7 @@ default['confluent-platform']['kafka']['jmx_opts'] = {
 
 # Kafka log4j configuration
 default['confluent-platform']['kafka']['log4j'] = {
-  'kafka.logs.dir' => 'logs',
+  'kafka.logs.dir' => '/var/log/kafka',
   'log4j.rootLogger' => 'INFO, stdout ',
   'log4j.appender.stdout' => 'org.apache.log4j.ConsoleAppender',
   'log4j.appender.stdout.layout' => 'org.apache.log4j.PatternLayout',

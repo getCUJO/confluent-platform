@@ -46,8 +46,10 @@ template "/etc/kafka/log4j.properties" do
   variables :config => node['confluent-platform']['kafka']['log4j']
 end
 
-# Set correct ownership to kafka log directories
-[ '/var/log/kafka', '/var/lib/kafka' ].each do |dir|
+# Create Kafka work directories with correct ownership
+data_dir = node['confluent-platform']['kafka']['config']['log.dirs']
+log_dir = node['confluent-platform']['kafka']['log4j']['kafka.logs.dir']
+[ data_dir, log_dir ].each do |dir|
   directory dir do
     owner node['confluent-platform']['kafka']['user']
     group node['confluent-platform']['kafka']['user']
