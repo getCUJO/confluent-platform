@@ -151,7 +151,7 @@ default['confluent-platform']['kafka']['log4j'] = {
 
 
 # Schema Registry configuration
-default['confluent-platform']['registry']['user'] = 'registry'
+default['confluent-platform']['registry']['user'] = 'schema-registry'
 default['confluent-platform']['registry']['auto_restart'] = 'true'
 default['confluent-platform']['registry']['config'] = {
   'port' => '8081',
@@ -192,7 +192,7 @@ default['confluent-platform']['registry']['jmx_opts'] = {
 }
 
 # Kafka Rest configuration
-default['confluent-platform']['rest']['user'] = 'rest'
+default['confluent-platform']['rest']['user'] = 'kafka-rest'
 default['confluent-platform']['rest']['auto_restart'] = 'true'
 default['confluent-platform']['rest']['config'] = {}
 default['confluent-platform']['rest']['log4j'] = {
