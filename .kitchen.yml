@@ -45,7 +45,8 @@ platforms:
           GEM_CACHE=/tmp/verifier/gems/cache
           /opt/chef/embedded/bin/gem install
           thor busser busser-serverspec serverspec bundler &&
-          chown -R kitchen:kitchen /tmp/verifier
+          chown -R kitchen:kitchen /tmp/verifier &&
+          yum install -y iproute
 
 suites:
   # Use dnsdock to provide a container name resolution
