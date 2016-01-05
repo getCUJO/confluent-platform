@@ -15,8 +15,8 @@
 #
 
 # confluent version and general cookbook attributes
-default['confluent-platform']['version']        = '1.0'
-default['confluent-platform']['scala_version']  = '2.11.5'
+default['confluent-platform']['version']        = '2.0'
+default['confluent-platform']['scala_version']  = '2.11.7'
 default['confluent-platform']['java']['centos'] = 'java-1.8.0-openjdk-headless'
 
 # Cluster search configuration
