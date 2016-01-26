@@ -15,7 +15,7 @@
 #
 
 # Install service file, reload systemd daemon if necessary
-execute "systemd-reload" do
+execute "kafka:systemd-reload" do
   command "systemctl daemon-reload"
   action :nothing
 end
@@ -23,7 +23,7 @@ end
 template "/usr/lib/systemd/system/kafka.service" do
   mode          "0644"
   source        "kafka.service.erb"
-  notifies      :run, 'execute[systemd-reload]', :immediately
+  notifies      :run, 'execute[kafka:systemd-reload]', :immediately
 end
 
 # Configuration files to be subscribed

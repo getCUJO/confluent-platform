@@ -15,7 +15,7 @@
 #
 
 # Install service file, reload systemd daemon if necessary
-execute "systemd-reload" do
+execute "registry:systemd-reload" do
   command "systemctl daemon-reload"
   action :nothing
 end
@@ -23,7 +23,7 @@ end
 template "/usr/lib/systemd/system/schema-registry.service" do
   mode          "0644"
   source        "schema-registry.service.erb"
-  notifies      :run, 'execute[systemd-reload]', :immediately
+  notifies      :run, 'execute[registry:systemd-reload]', :immediately
 end
 
 # Configuration files to be subscribed
@@ -38,7 +38,7 @@ else config_files = []
 end
 
 # Because registry takes time to start, we wait a bit so further tests pass
-execute "sleep" do
+execute "registry:sleep" do
   command "sleep 15"
   action :nothing
 end
@@ -49,5 +49,5 @@ service "schema-registry" do
   supports :status => true, :restart => true
   action [ :enable, :start ]
   subscribes :restart, config_files
-  notifies :run, 'execute[sleep]', :delayed
+  notifies :run, 'execute[registry:sleep]', :delayed
 end
