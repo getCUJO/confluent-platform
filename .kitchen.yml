@@ -19,12 +19,16 @@
 #   <% require "#{File.dirname(__FILE__)}/test/kitchen_command.rb" %>
 # - nodes generation from suites definition
 #   <% require "#{File.dirname(__FILE__)}/test/kitchen_sandbox.rb" %>
-# - improve login and destroy with docker driver (depend on systemd)
-#   <% require "#{File.dirname(__FILE__)}/test/kitchen_docker.rb" %>
+# - Create kitchen network if missing
+#   <% net_test = '! docker network ls | grep "kitchen" >/dev/null 2>&1' %>
+#   <% net_create = 'docker network create --driver bridge kitchen' %>
+#   <% `if #{net_test}; then #{net_create}; fi` %>
 
 driver:
-  name: docker
-  use_sudo: false
+  name: docker_cli
+
+transport:
+  name: docker_cli
 
 provisioner:
   name: chef_zero
@@ -32,57 +36,17 @@ provisioner:
 platforms:
   - name: centos-7
     driver_config:
-      # The two following lines are needed by systemd to access cgroups
+      image: sbernard/centos-systemd-kitchen
       volume: /sys/fs/cgroup:/sys/fs/cgroup:ro
-      privileged: true
-      run_command: /usr/sbin/init # Start systemd as root process
-      # general provisionning for kitchen
-      require_chef_omnibus: false
-      provision_command:
-        - >
-          curl -L https://www.getchef.com/chef/install.sh | bash &&
-          GEM_HOME=/tmp/verifier/gems GEM_PATH=/tmp/verifier/gems
-          GEM_CACHE=/tmp/verifier/gems/cache
-          /opt/chef/embedded/bin/gem install
-          thor busser busser-serverspec serverspec bundler &&
-          chown -R kitchen:kitchen /tmp/verifier &&
-          yum install -y iproute
+      command: /usr/lib/systemd/systemd
+      network: kitchen
 
 suites:
-  # Use dnsdock to provide a container name resolution
-  - name: dnsdock
-    includes: centos-7
-    driver:
-      hostname: dnsdock-kafka
-      instance_name: dnsdock-kafka
-      volume:
-        - /sys/fs/cgroup:/sys/fs/cgroup:ro
-        - /var/run/docker.sock:/opt/run/docker.sock:ro
-      provision_command:
-        - > # Everything needed to make dnsdock work in kitchen
-          curl -L https://www.getchef.com/chef/install.sh | bash &&
-          yum install -y go tar git hostname &&
-          mkdir -p /opt/go &&
-          export GOPATH=/opt/go && export PATH=$PATH:/opt/go/bin &&
-          go get -v github.com/tools/godep &&
-          mkdir -p /opt/go/src/github.com/tonistiigi &&
-          cd /opt/go/src/github.com/tonistiigi &&
-          curl https://codeload.github.com/tonistiigi/dnsdock/tar.gz/v1.5.0 |
-          tar xz && cd dnsdock-1.5.0 &&
-          godep restore && go build &&
-          mv dnsdock-1.5.0 /opt/go/bin/dnsdock &&
-          echo -e '[Unit]\nDescription=dnsdock\n
-          [Service]\nExecStart=/opt/go/bin/dnsdock
-          -docker unix:///opt/run/docker.sock -domain=kitchen\n
-          [Install]\nWantedBy=multi-user.target'
-          > /usr/lib/systemd/system/dnsdock.service &&
-          systemctl enable dnsdock
-
   # Install a stand-alone zookeeper
   - name: zookeeper
     driver:
       hostname: zookeeper-kafka.kitchen
-      instance_name: zookeeper-kafka
+      container_name: zookeeper-kafka
     run_list:
       - recipe[zookeeper-platform]
     attributes:
@@ -90,17 +54,13 @@ suites:
         hosts: zookeeper-kafka.kitchen
 
   # True tests begin here
-
-# Set var ip_of to use it in dns settings
-<% ip_of = "docker inspect --format '{{.NetworkSettings.IPAddress}}'" %>
 # Generate different types of nodes
 <% { 'kafka' => 3, 'registry' => 1, 'rest' => 1 }.each do |name,n| %>
   <% ("01".."#{n}").each do |i| %>
   - name: <%= name %>-<%= i %>
     driver:
       hostname: <%= name %>-kitchen-<%= i %>.kitchen
-      instance_name: <%= name %>-kitchen-<%= i %>
-      dns: $(<%= ip_of %> dnsdock-kafka)
+      container_name: <%= name %>-kitchen-<%= i %>
     run_list:
       - role[<%= name %>-kitchen]
   <% end %>
