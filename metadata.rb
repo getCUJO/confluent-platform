@@ -8,7 +8,7 @@ source_url 'https://gitlab.com/s4m-chef-repositories/confluent-platform'
 issues_url 'https://gitlab.com/s4m-chef-repositories/confluent-platform/issues'
 version '1.3.0'
 
-supports 'centos',  '>= 7.1'
+supports 'centos', '>= 7.1'
 
 depends 'cluster-search'
 depends 'yum'

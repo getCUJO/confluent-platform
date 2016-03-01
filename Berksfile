@@ -1,4 +1,4 @@
 source 'https://supermarket.chef.io'
 
-cookbook "zookeeper-platform"
+cookbook 'zookeeper-platform'
 metadata
