@@ -18,7 +18,7 @@ require 'spec_helper'
 
 describe 'Schema Registry' do
   it 'is running' do
-    expect(service("schema-registry")).to be_running
+    expect(service('schema-registry')).to be_running
   end
 
   it 'is launched at boot' do
@@ -44,8 +44,8 @@ describe 'Schema Registry Configuration' do
   end
 
   describe file('/etc/schema-registry/log4j.properties') do
-    its(:content) { should contain "log4j.rootLogger=INFO, stdout" }
-    its(:content) { should contain "# Kitchen=true" }
+    its(:content) { should contain 'log4j.rootLogger=INFO, stdout' }
+    its(:content) { should contain '# Kitchen=true' }
   end
 end
 
@@ -57,59 +57,59 @@ describe 'With Schema Registry Rest Interface' do
   schema_id = nil
 
   it 'We can register a new version of a schema under the subject "key"' do
-    id = %x(#{curl} POST #{header} #{data} #{url}/subjects/key/versions)
+    id = `#{curl} POST #{header} #{data} #{url}/subjects/key/versions`
     exp = /\{"id":(\d+)\}/
     schema_id = exp.match(id)[1]
     expect(schema_id).not_to be_nil
   end
 
   it 'We can register a new version of a schema under the subject "value"' do
-    id = %x(#{curl} POST #{header} #{data} #{url}/subjects/value/versions)
+    id = `#{curl} POST #{header} #{data} #{url}/subjects/value/versions`
     expect(id).to match(/\{"id":\d+\}/)
   end
 
   it 'We can list all subjects' do
-    subjects = %x(#{curl} GET #{header} #{url}/subjects)
-    expect(subjects).to include("key","value")
+    subjects = `#{curl} GET #{header} #{url}/subjects`
+    expect(subjects).to include('key', 'value')
   end
 
   it 'We can list all schema versions registered under the subject "value"' do
-    versions = %x(#{curl} GET #{header} #{url}/subjects/value/versions)
+    versions = `#{curl} GET #{header} #{url}/subjects/value/versions`
     expect(versions).to match(/\[(\d+,?)+\]/)
   end
 
-  it "We can fetch a schema by its global unique id" do
+  it 'We can fetch a schema by its global unique id' do
     expect(schema_id).not_to be_nil
-    if schema_id != nil
-      schema = %x(#{curl} GET #{header} #{url}/schemas/ids/#{schema_id})
+    unless schema_id.nil?
+      schema = `#{curl} GET #{header} #{url}/schemas/ids/#{schema_id}`
       expect(schema).to eq('{"schema":"\"string\""}')
     end
   end
 
   it 'We can fetch version 1 of the schema registered under subject "value"' do
-    schema = %x(#{curl} GET #{header} #{url}/subjects/value/versions/1)
+    schema = `#{curl} GET #{header} #{url}/subjects/value/versions/1`
     expect(schema).to match(
       /{"subject":"value","version":1,"id":\d+,"schema":"\\\"string\\\""}/
     )
   end
 
   it 'We can fetch the most recently registered "value" schema' do
-    schema = %x(#{curl} GET #{header} #{url}/subjects/value/versions/latest)
+    schema = `#{curl} GET #{header} #{url}/subjects/value/versions/latest`
     expect(schema).to match(
       /{"subject":"value","version":\d+,"id":\d+,"schema":"\\\"string\\\""}/
     )
   end
 
   it 'We can check whether a schema has been registered under subject "key"' do
-    schema = %x(#{curl} POST #{header} #{data} #{url}/subjects/key)
+    schema = `#{curl} POST #{header} #{data} #{url}/subjects/key`
     expect(schema).to match(
       /{"subject":"key","version":\d+,"id":\d+,"schema":"\\\"string\\\""}/
     )
   end
 
   it 'We can test the compatibility of a schema with latest "value" schema' do
-    compatible = %x(#{curl} POST #{header} #{data} \
-      #{url}/compatibility/subjects/value/versions/latest)
+    compatible = `#{curl} POST #{header} #{data} \
+      #{url}/compatibility/subjects/value/versions/latest`
     expect(compatible).to eq('{"is_compatible":true}')
   end
 end

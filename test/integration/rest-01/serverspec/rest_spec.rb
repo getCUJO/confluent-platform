@@ -18,7 +18,7 @@ require 'spec_helper'
 
 describe 'Kafka Rest' do
   it 'is running' do
-    expect(service("kafka-rest")).to be_running
+    expect(service('kafka-rest')).to be_running
   end
 
   it 'is launched at boot' do
@@ -43,8 +43,8 @@ describe 'Kafka Rest Configuration' do
   end
 
   describe file('/etc/kafka-rest/log4j.properties') do
-    its(:content) { should contain "log4j.rootLogger=INFO, stdout" }
-    its(:content) { should contain "# Kitchen=true" }
+    its(:content) { should contain 'log4j.rootLogger=INFO, stdout' }
+    its(:content) { should contain '# Kitchen=true' }
   end
 end
 
@@ -54,15 +54,15 @@ describe 'With Kafka Rest' do
   url = 'http://localhost:8082'
 
   it 'We can get the list of topics' do
-    topics = %x(#{curl} GET "#{url}/topics")
-    expect(eval(topics)).to include('_schemas')
+    topics = `#{curl} GET "#{url}/topics"`
+    expect(topics).to include('"_schemas"')
   end
 
   # Values send to Kafka
   values = { 'binary' => '"S2Fma2E="', 'avro' => '{"name":"testUser"}' }
 
   # Test producers
-  values.each do |id, value|
+  values.each do |id, _value|
     it "We can produce a #{id} message to the topic test-#{id}" do
       header = "-H 'Content-Type: application/vnd.kafka.#{id}.v1+json'"
       topic_url = "#{url}/topics/test-#{id}"
@@ -70,15 +70,16 @@ describe 'With Kafka Rest' do
       # Data field used by our producers
       data = {
         'binary' => "{\"records\":[{\"value\":#{values['binary']}}]}",
-        'avro' => '{"value_schema":"{\"type\":\"record\",\"name\":\"User\",' +
-          '\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}",' +
+        'avro' => '{"value_schema":"{\"type\":\"record\",\"name\":\"User\",' \
+          '\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}",' \
           "\"records\":[{\"value\":#{values['avro']}}]}"
       }
 
-      offsets = %x(#{curl} POST #{header} --data '#{data[id]}' "#{topic_url}")
+      offsets = `#{curl} POST #{header} --data '#{data[id]}' "#{topic_url}"`
       exp = /{"offsets":
         \[{"partition":\d+,"offset":\d+,"error_code":null,"error":null}\],
-       "key_schema_id":null,"value_schema_id":#{id=='avro'?'\d+':'null'}}/x
+        "key_schema_id":null,"value_schema_id":
+        #{id == 'avro' ? '\d+' : 'null'}}/x
       expect(offsets).to match(exp)
     end
   end
@@ -89,21 +90,21 @@ describe 'With Kafka Rest' do
       # Specific variables
       create_header = '-H "Content-Type: application/vnd.kafka.v1+json"'
       consume_header = "-H 'Accept: application/vnd.kafka.#{id}.v1+json'"
-      data = "--data '{\"id\": \"#{id}\", \"format\": \"#{id}\", " +
+      data = "--data '{\"id\": \"#{id}\", \"format\": \"#{id}\", " \
         "\"auto.offset.reset\": \"smallest\"}'"
       consumer = "#{url}/consumers/#{id}_consumer"
       instance = "#{consumer}/instances/#{id}"
 
       # Delete existing current consumers
-      %x(#{curl} DELETE #{instance})
+      `#{curl} DELETE #{instance}`
 
       # Create the consumer
-      create = %x(#{curl} POST #{create_header} #{data} #{consumer})
+      create = `#{curl} POST #{create_header} #{data} #{consumer}`
       exp = "{\"instance_id\":\"#{id}\",\"base_uri\":\"#{instance}\"}"
       expect(create).to eq(exp)
 
       # Consume messages
-      read = %x(#{curl} GET #{consume_header} #{instance}/topics/test-#{id})
+      read = `#{curl} GET #{consume_header} #{instance}/topics/test-#{id}`
       expect(read).to match(
         /\[({"key":null,"value":#{value},"partition":\d+,"offset":\d+},?)+\]/
       )

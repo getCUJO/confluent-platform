@@ -18,7 +18,7 @@ require 'spec_helper'
 
 describe 'Kafka Daemon' do
   it 'is running' do
-    expect(service("kafka")).to be_running
+    expect(service('kafka')).to be_running
   end
 
   it 'is launched at boot' do
@@ -57,13 +57,15 @@ describe 'Kafka Configuration' do
   end
 
   describe file('/etc/kafka/log4j.properties') do
-    its(:content) { should contain "log4j.rootLogger=INFO, stdout" }
-    its(:content) { should contain "# Kitchen=true" }
+    its(:content) { should contain 'log4j.rootLogger=INFO, stdout' }
+    its(:content) { should contain '# Kitchen=true' }
   end
 end
 
 describe 'Kafka Cluster' do
-  brokers = [1,2,3].map {|i| "--broker-list kafka-kitchen-0#{i}.kitchen:9092"}
+  brokers = [1, 2, 3].map do |i|
+    "--broker-list kafka-kitchen-0#{i}.kitchen:9092"
+  end
   zk = '--zookeeper zookeeper-kafka.kitchen/kafka-kitchen'
   topic = '--topic test'
   messages = %w(test_msg) * 6
@@ -84,13 +86,13 @@ describe 'Kafka Cluster' do
   end
 
   it 'Topic "test" should have been created' do
-    expected = ["Topic:test", "PartitionCount:3", "ReplicationFactor:3"]
-    topics = %x(kafka-topics --describe #{zk} #{topic} #{emute}).split[0..2]
+    expected = ['Topic:test', 'PartitionCount:3', 'ReplicationFactor:3']
+    topics = `kafka-topics --describe #{zk} #{topic} #{emute}`.split[0..2]
     expect(topics).to eq(expected)
   end
 
- it 'Topic "test" should contain the messages we sent' do
-    output = %x(kafka-console-consumer #{zk} #{topic} #{copts} #{emute})
+  it 'Topic "test" should contain the messages we sent' do
+    output = `kafka-console-consumer #{zk} #{topic} #{copts} #{emute}`
     output = output.split.sort
     expect(output).to eq(messages.sort)
   end
