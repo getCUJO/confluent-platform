@@ -10,7 +10,7 @@ system. It is widely adopted for use cases ranging from collecting user
 activity data, logs, application metrics, stock ticker data, and device
 instrumentation. Its key strength is its ability to make high volume data
 available as a real-time stream for consumption in systems with very different
-requirements—from batch systems like Hadoop, to real-time systems that require
+requirements from batch systems like Hadoop, to real-time systems that require
 low-latency access, to stream processing engines that transform the data
 streams as they arrive.
 
@@ -34,8 +34,9 @@ Declared in [metadata.rb](metadata.rb) and in [Gemfile](Gemfile).
 A *systemd* managed distribution:
 - RHEL Family 7, tested on Centos
 
-Note: it should work fine on Debian 8 but the official docker image does not
-allow systemd to work easily, so it could not be tested.
+Note: it should work quite fine on Debian 8 (with some attributes tuning) but
+the official docker image does not allow systemd to work easily, so it could
+not be tested.
 
 Usage
 -----
@@ -44,9 +45,9 @@ Usage
 
 Default recipe does nothing. Each service **Kafka**, **Schema Registry** or
 **Kafka Rest** will be installed by calling respectively recipe
-[install-kafka](recipes/install-kafka.rb),
-[install-registry](recipes/install-registry.rb) and
-[install-rest](recipes/install-rest.rb).
+[install\_kafka](recipes/install_kafka.rb),
+[install\_registry](recipes/install_registry.rb) and
+[install\_rest](recipes/install_rest.rb).
 
 By default, this cookbook installs *openjdk* from the official repositories
 *(openjdk 8 on centos 7)* in **services** recipe, just before
@@ -61,16 +62,35 @@ role per cluster, that is a role for **Kafka**, **Schema Registry** and
 **Kafka Rest**. This enables the search by role feature, allowing a simple
 service discovery.
 
-See [roles](test/integration/roles) for some examples and *Cluster Search*
-documentation for more information.
+In fact, there are two ways to configure the search:
+1. with a static configuration through a list of hostnames (attributes `hosts`
+   like in `['confluent-platform']['kafka']['hosts']`)
+2. with a real search, performed on a role (attributes `role` and `size`
+   like in `['confluent-platform']['kafka']['role']`). The role should be in
+   the run-list of all nodes of the cluster. The size is a safety and should be
+   the number of nodes in the cluster.
+
+If hosts is configured, `role` and `size` are ignored.
+
+See [roles](test/integration/roles) for some examples and
+[Cluster Search][cluster-search] documentation for more information.
+
+### Zookeeper Cluster
+
+To install properly a **Kafka** cluster, you need a **Zookeeper** cluster.
+This is not in the scope of this cookbook but if you need one, you should
+consider using [Zookeeper Platform][zookeeper-platform].
+
+The configuration of Zookeeper hosts use search and is done similarly as for
+**Kafka**, **Schema Registry** and **Kafka Rest** hosts, _ie_ with a static
+list of hostnames or by using a search on a role.
 
 ### Test
 
 This cookbook is fully tested through the installation of the full platform
 in docker hosts. This uses kitchen, docker and some monkey-patching.
 
-If you run `kitchen list`, you will see 7 suites:
-- dnsdock-centos-7
+If you run `kitchen list`, you will see 6 suites:
 - zookeeper-centos-7
 - kafka-01-centos-7
 - kafka-02-centos-7
@@ -78,7 +98,8 @@ If you run `kitchen list`, you will see 7 suites:
 - registry-01-centos-7
 - rest-01-centos-7
 
-Each corresponds to a different node in the cluster.
+Each corresponds to a different node in the cluster. They are connected through
+a brigde network named *kitchen*, which is created if necessary.
 
 For more information, see [.kitchen.yml](.kitchen.yml) and [test](test)
 directory.
@@ -91,10 +112,12 @@ new Kafka client). Moreover, compared to a single node cluster usually
 installed on workstations, you can detected partition/timing/fault-tolerance
 issues you could not because of the simplicity of a single-node system.
 
-You can access it by adding the dnsdock used in the cluster as your main DNS
-resolver: add
-`docker inspect --format '{{.NetworkSettings.IPAddress}}' dnsdock-kafka`
-in `/etc/resolv.conf`.
+You can access it by using internal DNS of the docker network named *kitchen*
+or by declaring each node in your hosts file. You can get each IP by
+running:
+
+    docker inspect --format \
+      '{{.NetworkSettings.Networks.kitchen.IPAddress}}' container_name
 
 Then to produce some messages:
 
@@ -109,8 +132,9 @@ And to read them:
       --topic my_topic \
       --from-beginning
 
-Or you can use Rest API with http://rest-kitchen-01.kitchen:8082 and full
-Schema Registry support, located at http://registry-kitchen-01.kitchen:8081.
+Or you can use Rest API with [http://rest-kitchen-01.kitchen:8082]() and full
+Schema Registry support, located at
+[http://registry-kitchen-01.kitchen:8081]().
 
 Attributes
 ----------
@@ -131,25 +155,25 @@ Does nothing.
 
 Configure confluent repository.
 
-### install-*service*
+### install\_*service*
 
 Install and fully configure a given *service* by running *repository* and its
 4 dedicated recipes: *package*, *user*, *config* and *service*, in that order.
 
-### *service*-package
+### *service*\_package
 
 Install given *service* from confluent repository.
 
-### *service*-user
+### *service*\_user
 
 Create given *service* system user and group.
 
-### *service*-config
+### *service*\_config
 
 Generate *service* configuration. May search for dependencies (like Zookeeper
 or other nodes of the same cluster) with the help of cluster-search cookbook.
 
-### *service*-service
+### *service*\service
 
 Install systemd unit for the given *service*, then enable and start it.
 
@@ -193,3 +217,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+[cluster-search]: https://supermarket.chef.io/cookbooks/cluster-search
+[zookeeper-platform]: https://supermarket.chef.io/cookbooks/zookeeper-platform
