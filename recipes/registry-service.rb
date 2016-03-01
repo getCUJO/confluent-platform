@@ -15,22 +15,22 @@
 #
 
 # Install service file, reload systemd daemon if necessary
-execute "registry:systemd-reload" do
-  command "systemctl daemon-reload"
+execute 'registry:systemd-reload' do
+  command 'systemctl daemon-reload'
   action :nothing
 end
 
-template "/usr/lib/systemd/system/schema-registry.service" do
-  mode          "0644"
-  source        "schema-registry.service.erb"
-  notifies      :run, 'execute[registry:systemd-reload]', :immediately
+template '/usr/lib/systemd/system/schema-registry.service' do
+  mode '0644'
+  source 'schema-registry.service.erb'
+  notifies :run, 'execute[registry:systemd-reload]', :immediately
 end
 
 # Configuration files to be subscribed
 if node['confluent-platform']['registry']['auto_restart']
   config_files = [
-    "/etc/schema-registry/schema-registry.properties",
-    "/etc/schema-registry/log4j.properties"
+    '/etc/schema-registry/schema-registry.properties',
+    '/etc/schema-registry/log4j.properties'
   ].map do |path|
     "template[#{path}]"
   end
@@ -38,16 +38,16 @@ else config_files = []
 end
 
 # Because registry takes time to start, we wait a bit so further tests pass
-execute "registry:sleep" do
-  command "sleep 15"
+execute 'registry:sleep' do
+  command 'sleep 15'
   action :nothing
 end
 
 # Enable/Start service
-service "schema-registry" do
+service 'schema-registry' do
   provider Chef::Provider::Service::Systemd
-  supports :status => true, :restart => true
-  action [ :enable, :start ]
+  supports status: true, restart: true
+  action [:enable, :start]
   subscribes :restart, config_files
   notifies :run, 'execute[registry:sleep]', :delayed
 end

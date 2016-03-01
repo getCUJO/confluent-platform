@@ -15,4 +15,4 @@
 #
 
 # Install Kafka with configured scala version
-package "confluent-schema-registry"
+package 'confluent-schema-registry'

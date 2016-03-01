@@ -22,34 +22,34 @@ config = node['confluent-platform']['kafka']['config'].to_hash
 
 # Search Zookeeper cluster
 zookeeper = cluster_search(node['confluent-platform']['zookeeper'])
-return if zookeeper == nil # Not enough nodes
+return if zookeeper.nil? # Not enough nodes
 zk_connection = zookeeper['hosts'].map do |host|
-  host + ":2181"
+  "#{host}:2181"
 end.join(',') + node['confluent-platform']['kafka']['zk_chroot']
 config['zookeeper.connect'] = zk_connection
 
 # Search other Kafka
 kafka = cluster_search(node['confluent-platform']['kafka'])
-return if kafka == nil # Not enough nodes
+return if kafka.nil? # Not enough nodes
 config['broker.id'] = kafka['my_id']
 
 # Write configuration
-template "/etc/kafka/server.properties" do
-  source "properties.erb"
+template '/etc/kafka/server.properties' do
+  source 'properties.erb'
   mode '644'
-  variables :config => config
+  variables config: config
 end
 
-template "/etc/kafka/log4j.properties" do
-  source "properties.erb"
+template '/etc/kafka/log4j.properties' do
+  source 'properties.erb'
   mode '644'
-  variables :config => node['confluent-platform']['kafka']['log4j']
+  variables config: node['confluent-platform']['kafka']['log4j']
 end
 
 # Create Kafka work directories with correct ownership
 data_dir = node['confluent-platform']['kafka']['config']['log.dirs']
 log_dir = node['confluent-platform']['kafka']['log4j']['kafka.logs.dir']
-[ data_dir, log_dir ].each do |dir|
+[data_dir, log_dir].each do |dir|
   directory dir do
     owner node['confluent-platform']['kafka']['user']
     group node['confluent-platform']['kafka']['user']

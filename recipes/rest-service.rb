@@ -15,22 +15,22 @@
 #
 
 # Install service file, reload systemd daemon if necessary
-execute "kafka-rest:systemd-reload" do
-  command "systemctl daemon-reload"
+execute 'kafka-rest:systemd-reload' do
+  command 'systemctl daemon-reload'
   action :nothing
 end
 
-template "/usr/lib/systemd/system/kafka-rest.service" do
-  mode          "0644"
-  source        "kafka-rest.service.erb"
-  notifies      :run, 'execute[kafka-rest:systemd-reload]', :immediately
+template '/usr/lib/systemd/system/kafka-rest.service' do
+  mode '0644'
+  source 'kafka-rest.service.erb'
+  notifies :run, 'execute[kafka-rest:systemd-reload]', :immediately
 end
 
 # Configuration files to be subscribed
 if node['confluent-platform']['rest']['auto_restart']
   config_files = [
-    "/etc/kafka-rest/kafka-rest.properties",
-    "/etc/kafka-rest/log4j.properties"
+    '/etc/kafka-rest/kafka-rest.properties',
+    '/etc/kafka-rest/log4j.properties'
   ].map do |path|
     "template[#{path}]"
   end
@@ -38,9 +38,9 @@ else config_files = []
 end
 
 # Enable/Start service
-service "kafka-rest" do
+service 'kafka-rest' do
   provider Chef::Provider::Service::Systemd
-  supports :status => true, :restart => true
-  action [ :enable, :start ]
+  supports status: true, restart: true
+  action [:enable, :start]
   subscribes :restart, config_files
 end

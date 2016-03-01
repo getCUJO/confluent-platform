@@ -15,32 +15,32 @@
 #
 
 # confluent version and general cookbook attributes
-default['confluent-platform']['version']        = '2.0'
-default['confluent-platform']['scala_version']  = '2.11.7'
+default['confluent-platform']['version'] = '2.0'
+default['confluent-platform']['scala_version'] = '2.11.7'
 default['confluent-platform']['java']['centos'] = 'java-1.8.0-openjdk-headless'
 
 # Cluster search configuration
 # To understand the following attributes, look at 'cluster-search' README
 
 # Zookeeper cluster
-default['confluent-platform']['zookeeper']['role']  = 'zookeeper-cluster'
+default['confluent-platform']['zookeeper']['role'] = 'zookeeper-cluster'
 default['confluent-platform']['zookeeper']['hosts'] = []
-default['confluent-platform']['zookeeper']['size']  = 3
+default['confluent-platform']['zookeeper']['size'] = 3
 
 # Kafka cluster
-default['confluent-platform']['kafka']['role']  = 'kafka-cluster'
+default['confluent-platform']['kafka']['role'] = 'kafka-cluster'
 default['confluent-platform']['kafka']['hosts'] = []
-default['confluent-platform']['kafka']['size']  = 3
+default['confluent-platform']['kafka']['size'] = 3
 
 # Schema Registry cluster
-default['confluent-platform']['registry']['role']  = 'schema-registry-cluster'
+default['confluent-platform']['registry']['role'] = 'schema-registry-cluster'
 default['confluent-platform']['registry']['hosts'] = []
-default['confluent-platform']['registry']['size']  = 3
+default['confluent-platform']['registry']['size'] = 3
 
 # Kafka Rest cluster
-default['confluent-platform']['rest']['role']  = 'kafka-rest-cluster'
+default['confluent-platform']['rest']['role'] = 'kafka-rest-cluster'
 default['confluent-platform']['rest']['hosts'] = []
-default['confluent-platform']['rest']['size']  = 3
+default['confluent-platform']['rest']['size'] = 3
 
 # Kafka configuration
 # Always use a chroot in Zookeeper
@@ -51,23 +51,23 @@ default['confluent-platform']['kafka']['user'] = 'kafka'
 default['confluent-platform']['kafka']['auto_restart'] = 'true'
 
 # Kafka configuration, default provided by Kafka project
-default['confluent-platform']['kafka']['config']      = {
+default['confluent-platform']['kafka']['config'] = {
   'broker.id' => 0,
   'port' => 9092,
   'num.network.threads' => 3,
   'num.io.threads' => 8,
-  'socket.send.buffer.bytes' => 102400,
-  'socket.receive.buffer.bytes' => 102400,
-  'socket.request.max.bytes' => 104857600,
+  'socket.send.buffer.bytes' => 102_400,
+  'socket.receive.buffer.bytes' => 102_400,
+  'socket.request.max.bytes' => 104_857_600,
   'log.dirs' => '/var/lib/kafka',
   'num.partitions' => 1,
   'num.recovery.threads.per.data.dir' => 1,
   'log.retention.hours' => 168,
-  'log.segment.bytes' => 1073741824,
-  'log.retention.check.interval.ms' => 300000,
+  'log.segment.bytes' => 1_073_741_824,
+  'log.retention.check.interval.ms' => 300_000,
   'log.cleaner.enable' => false,
   'zookeeper.connect' => 'localhost:2181',
-  'zookeeper.connection.timeout.ms' => 6000
+  'zookeeper.connection.timeout.ms' => 6_000
 }
 
 # Kafka JVM configuration
@@ -148,7 +148,6 @@ default['confluent-platform']['kafka']['log4j'] = {
   'log4j.logger.state.change.logger' => 'TRACE, stateChangeAppender',
   'log4j.additivity.state.change.logger' => 'false'
 }
-
 
 # Schema Registry configuration
 default['confluent-platform']['registry']['user'] = 'schema-registry'

@@ -22,21 +22,21 @@ config = node['confluent-platform']['registry']['config'].to_hash
 
 # Search Zookeeper cluster
 zookeeper = cluster_search(node['confluent-platform']['zookeeper'])
-return if zookeeper == nil # Not enough nodes
+return if zookeeper.nil? # Not enough nodes
 zk_connection = zookeeper['hosts'].map do |host|
-  host + ":2181"
+  "#{host}:2181"
 end.join(',') + node['confluent-platform']['kafka']['zk_chroot']
 config['kafkastore.connection.url'] = zk_connection
 
 # Write configuration
-template "/etc/schema-registry/schema-registry.properties" do
-  source "properties.erb"
+template '/etc/schema-registry/schema-registry.properties' do
+  source 'properties.erb'
   mode '644'
-  variables :config => config
+  variables config: config
 end
 
-template "/etc/schema-registry/log4j.properties" do
-  source "properties.erb"
+template '/etc/schema-registry/log4j.properties' do
+  source 'properties.erb'
   mode '644'
-  variables :config => node['confluent-platform']['registry']['log4j']
+  variables config: node['confluent-platform']['registry']['log4j']
 end
