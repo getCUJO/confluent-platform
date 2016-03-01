@@ -179,7 +179,7 @@ License and Author
 - Author:: Samuel Bernard (<samuel.bernard@s4m.io>)
 
 ```text
-Copyright:: 2015, Sam4Mobile
+Copyright (c) 2015-2016 Sam4Mobile
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
