@@ -16,8 +16,8 @@
 
 # Stand-alone meta-recipe to install Kafka and configure it
 include_recipe "#{cookbook_name}::repository"
-include_recipe "#{cookbook_name}::kafka-package"
-include_recipe "#{cookbook_name}::kafka-user"
-include_recipe "#{cookbook_name}::kafka-config"
+include_recipe "#{cookbook_name}::rest_package"
+include_recipe "#{cookbook_name}::rest_user"
+include_recipe "#{cookbook_name}::rest_config"
 include_recipe "#{cookbook_name}::java"
-include_recipe "#{cookbook_name}::kafka-service"
+include_recipe "#{cookbook_name}::rest_service"

@@ -32,7 +32,7 @@
   },
   "chef_type": "role",
   "run_list": [
-    "recipe[confluent-platform::install-rest]"
+    "recipe[confluent-platform::install_rest]"
   ],
   "env_run_lists": {
 
