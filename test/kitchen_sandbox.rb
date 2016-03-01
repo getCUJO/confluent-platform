@@ -30,9 +30,8 @@ require 'kitchen/provisioner/chef/common_sandbox'
 module Kitchen
   module Provisioner
     module Chef
-
       class CommonSandbox
-        alias_method :prepare_official, :prepare
+        alias prepare_official prepare
 
         def prepare(component, opts = {})
           generate_nodes(component, opts) if component == :nodes
@@ -41,10 +40,10 @@ module Kitchen
         end
 
         def generate_nodes(component, opts)
-          dest = File.join(sandbox_path, opts.fetch(:dest_name,component.to_s))
+          dest = File.join(sandbox_path, opts.fetch(:dest_name, component.to_s))
           FileUtils.mkdir_p(dest)
 
-          nodes = $suites.map do |suite|
+          $suites.each do |suite| # rubocop:disable Style/GlobalVars
             node = generate_node(suite)
             unless node.nil?
               File.write("#{dest}/#{suite[:driver][:hostname]}.json", node)
@@ -53,28 +52,30 @@ module Kitchen
         end
 
         def generate_node(suite)
-          if suite[:provisioner].nil? || suite[:driver][:hostname].nil? ||
-            suite[:driver].nil? || suite[:provisioner][:run_list].nil?
-            return nil
-          end
-
-          roles = suite[:provisioner][:run_list].map do |item|
-            role = item.match(/role\[([\w-]+)\]/)
-            role[1] unless role.nil?
-          end.reject(&:nil?)
-
+          return nil if nil_value?(suite)
           <<-eos.gsub(/^ {10}/, '')
           {
             "id": "#{suite[:driver][:hostname]}",
             "automatic": {
               "fqdn": "#{suite[:driver][:hostname]}",
-              "roles": #{roles}
+              "roles": #{roles(suite)}
             }
           }
           eos
         end
-      end
 
+        def nil_value?(suite)
+          suite[:provisioner].nil? || suite[:driver][:hostname].nil? ||
+            suite[:driver].nil? || suite[:provisioner][:run_list].nil?
+        end
+
+        def roles(suite)
+          suite[:provisioner][:run_list].map do |item|
+            role = item.match(/role\[([\w-]+)\]/)
+            role[1] unless role.nil?
+          end.reject(&:nil?)
+        end
+      end
     end
   end
 end

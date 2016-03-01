@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Sam4Mobile
+# Copyright (c) 2015-2016 Sam4Mobile
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,47 +15,57 @@
 #
 
 # Monkey patch RunAction to create a suites scheduler that consider
-# - dnsdock
 # - each suite is a different node
+# - some suites must converge first
 
 require 'kitchen/command'
 
 module Kitchen
   module Command
-
     module RunAction
-      alias_method :run_action_official, :run_action
+      alias run_action_official run_action
 
       def run_action(action, instances, *args)
         # Define suites as global so we can use them to generates nodes
         # in CommonSandbox
+        # rubocop:disable Style/GlobalVars
         $suites = @config.send(:data).suite_data
+        # rubocop:enable Style/GlobalVars
 
-        # Extract dnsdock instance(s) to be able to launch it first
+        # Extract helper instance(s) to be able to launch it first
         # so it is ready for other containers
-        dnsdocks = instances.select {|i| i.suite.name.include? "dnsdock" }
-        services = instances - dnsdocks
+        helpers = [] # No need here
+        services = instances - helpers
 
-        case action
-        when :destroy
-          run_action_official(action, instances, *args)
-        when :test
-          run_action_official(:destroy, instances)
-          run_action_official(:create, dnsdocks)
-          run_action_official(:create, services)
-          run_action_official(:converge, instances)
-          run_action_official(:verify, instances)
-          run_action_official(:destroy, instances) if args.first == :passing
+        if %i(destroy test create converge).include? action
+          send("run_#{action}".to_sym,
+               instances, services, helpers, args.first)
         else
-          # Always run create first to initiaze all dockers
-          run_action_official(:create, dnsdocks)
-          run_action_official(:create, services)
-          run_action_official(:converge, instances) if action == :verify
+          run_converge(instances, services, helpers) if action == :verify
           run_action_official(action, instances, *args) if action != :create
         end
       end
 
-    end
+      def run_destroy(instances, _services, _helpers, _type = nil)
+        run_action_official(:destroy, instances)
+      end
 
+      def run_test(instances, services, helpers, type = nil)
+        run_action_official(:destroy, instances)
+        run_converge(instances, services, helpers)
+        run_action_official(:verify, instances)
+        run_action_official(:destroy, instances) if type == :passing
+      end
+
+      def run_create(_instances, services, helpers, _type = nil)
+        run_action_official(:create, helpers)
+        run_action_official(:create, services)
+      end
+
+      def run_converge(_instances, services, helpers, _type = nil)
+        run_action_official(:converge, helpers)
+        run_action_official(:converge, services)
+      end
+    end
   end
 end
