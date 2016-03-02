@@ -1,6 +1,27 @@
 Changelog
 =========
 
+2.0.0
+-----
+
+Main:
+- Switch to confluent 2.0
+- Rename recipes to respect rubocop rules (breaking change)
+
+Tests:
+- Switch to docker_cli, use prepared docker image
+  + Switch kitchen driver from docker to docker_cli
+  + Use sbernard/centos-systemd-kitchen image instead of bare centos
+  + Remove privileged mode :)
+  + Remove some now useless monkey patching
+  + Remove dnsdock, use docker DNS (docker >= 1.10)
+  + Use "kitchen" network, create it if needed
+
+Misc:
+- Fix all rubocop offenses
+- Use specific name for resources to avoid cloning
+- Add more details on configuration in README
+
 1.2.0
 -----
 
