@@ -99,7 +99,7 @@ If you run `kitchen list`, you will see 6 suites:
 - rest-01-centos-7
 
 Each corresponds to a different node in the cluster. They are connected through
-a brigde network named *kitchen*, which is created if necessary.
+a bridge network named *kitchen*, which is created if necessary.
 
 For more information, see [.kitchen.yml](.kitchen.yml) and [test](test)
 directory.
@@ -173,7 +173,7 @@ Create given *service* system user and group.
 Generate *service* configuration. May search for dependencies (like Zookeeper
 or other nodes of the same cluster) with the help of cluster-search cookbook.
 
-### *service*\service
+### *service*\_service
 
 Install systemd unit for the given *service*, then enable and start it.
 
