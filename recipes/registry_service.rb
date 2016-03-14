@@ -20,7 +20,8 @@ execute 'registry:systemd-reload' do
   action :nothing
 end
 
-template '/usr/lib/systemd/system/schema-registry.service' do
+unit_path = node['confluent-platform']['unit_path']
+template "#{unit_path}/schema-registry.service" do
   mode '0644'
   source 'schema-registry.service.erb'
   notifies :run, 'execute[registry:systemd-reload]', :immediately

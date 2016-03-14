@@ -20,7 +20,8 @@ execute 'kafka:systemd-reload' do
   action :nothing
 end
 
-template '/usr/lib/systemd/system/kafka.service' do
+unit_path = node['confluent-platform']['unit_path']
+template "#{unit_path}/kafka.service" do
   mode '0644'
   source 'kafka.service.erb'
   notifies :run, 'execute[kafka:systemd-reload]', :immediately
