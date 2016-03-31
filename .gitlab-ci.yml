@@ -1,0 +1,38 @@
+foodcritic:
+  tags:
+    - foodcritic
+  script:
+    - foodcritic .
+
+rubocop:
+  tags:
+    - rubocop
+  script:
+    - rubocop
+
+lines_length:
+  script:
+    - >
+      curl https://gitlab.com/s4m/checks/raw/master/check_lines_length.sh |
+      bash
+
+git_history:
+  tags:
+    - git
+  script:
+    - >
+      curl https://gitlab.com/s4m/checks/raw/master/check_git_history.sh |
+      bash
+
+kitchen:
+  tags:
+    - kitchen
+    - docker
+  script:
+    - >
+      set +o pipefail;
+      grep container_name .kitchen.yml | tr -d ' ' | cut -f2 -d ':' |
+      xargs docker rm --force 2> /dev/null | rm -fr .kitchen
+    - kitchen create
+    - kitchen verify -c
+    - kitchen destroy -c
