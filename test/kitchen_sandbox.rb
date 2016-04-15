@@ -40,13 +40,14 @@ module Kitchen
         end
 
         def generate_nodes(component, opts)
-          dest = File.join(sandbox_path, opts.fetch(:dest_name, component.to_s))
-          FileUtils.mkdir_p(dest)
+          dest_name = opts.fetch(:dest_name, component.to_s)
+          dest_dir = File.join(sandbox_path, dest_name)
+          FileUtils.mkdir_p(dest_dir)
 
           $suites.each do |suite| # rubocop:disable Style/GlobalVars
             node = generate_node(suite)
             unless node.nil?
-              File.write("#{dest}/#{suite[:driver][:hostname]}.json", node)
+              File.write("#{dest_dir}/#{suite[:driver][:hostname]}.json", node)
             end
           end
         end
