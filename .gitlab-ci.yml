@@ -31,7 +31,7 @@ kitchen:
   script:
     - >
       set +o pipefail;
-      grep container_name .kitchen.yml | tr -d ' ' | cut -f2 -d ':' |
+      kitchen diagnose | grep container_name | awk '{print $2}' |
       xargs docker rm --force 2> /dev/null | rm -fr .kitchen
     - kitchen create
     - kitchen verify -c
