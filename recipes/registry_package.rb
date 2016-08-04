@@ -15,4 +15,6 @@
 #
 
 # Install Kafka with configured scala version
-package 'confluent-schema-registry'
+package 'confluent-schema-registry' do
+  retries node['confluent-platform']['package_retries']
+end

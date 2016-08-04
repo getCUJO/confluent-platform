@@ -15,4 +15,6 @@
 #
 
 # Install Kafka Rest package
-package 'confluent-kafka-rest'
+package 'confluent-kafka-rest' do
+  retries node['confluent-platform']['package_retries']
+end

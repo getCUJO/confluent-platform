@@ -26,6 +26,12 @@
 
 driver:
   name: docker_cli
+  volume: /sys/fs/cgroup:/sys/fs/cgroup:ro
+  command: /usr/lib/systemd/systemd
+  network: kitchen
+  security_opt: seccomp=unconfined
+  skip_preparation: true
+  require_chef_omnibus: false
 
 transport:
   name: docker_cli
@@ -37,9 +43,6 @@ platforms:
   - name: centos-7
     driver_config:
       image: sbernard/centos-systemd-kitchen
-      volume: /sys/fs/cgroup:/sys/fs/cgroup:ro
-      command: /usr/lib/systemd/systemd
-      network: kitchen
 
 suites:
   # Install a stand-alone zookeeper
@@ -52,10 +55,11 @@ suites:
     attributes:
       zookeeper-platform:
         hosts: zookeeper-kafka.kitchen
+        package_retries: 1
 
   # True tests begin here
 # Generate different types of nodes
-<% { 'kafka' => 3, 'registry' => 1, 'rest' => 1 }.each do |name,n| %>
+<% { 'kafka' => 3, 'registry' => 1, 'rest' => 1 }.each do |name, n| %>
   <% ("01".."#{n}").each do |i| %>
   - name: <%= name %>-<%= i %>
     driver:
@@ -63,5 +67,8 @@ suites:
       container_name: <%= name %>-kitchen-<%= i %>
     run_list:
       - role[<%= name %>-kitchen]
+    attributes:
+      confluent-platform:
+        package_retries: 1
   <% end %>
 <% end %>
