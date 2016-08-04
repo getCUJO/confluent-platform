@@ -36,6 +36,7 @@ describe 'Schema Registry Configuration' do
     # Produced by Chef -- changes will be overwritten
 
     port=8081
+    ssl.client.auth=false
     kafkastore.connection.url=zookeeper-kafka.kitchen:2181/kafka-kitchen
     kafkastore.topic=_schemas
     debug=false

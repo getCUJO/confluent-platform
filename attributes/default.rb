@@ -15,8 +15,8 @@
 #
 
 # Confluent version and general cookbook attributes
-default['confluent-platform']['version'] = '2.0'
-default['confluent-platform']['scala_version'] = '2.11.7'
+default['confluent-platform']['version'] = '3.0'
+default['confluent-platform']['scala_version'] = '2.11'
 default['confluent-platform']['java']['centos'] = 'java-1.8.0-openjdk-headless'
 
 # Systemd unit file path
@@ -157,6 +157,7 @@ default['confluent-platform']['registry']['user'] = 'schema-registry'
 default['confluent-platform']['registry']['auto_restart'] = 'true'
 default['confluent-platform']['registry']['config'] = {
   'port' => '8081',
+  'ssl.client.auth' => false,
   'kafkastore.connection.url' => 'localhost:2181',
   'kafkastore.topic' => '_schemas',
   'debug' => 'false'
@@ -221,3 +222,7 @@ default['confluent-platform']['rest']['jmx_opts'] = {
   '-Dcom.sun.management.jmxremote.port' => 8092,
   '-Djava.rmi.server.hostname' => node['fqdn']
 }
+
+# Configure retries for the package resources, default = global default (0)
+# (mostly used for test purpose)
+default['confluent-platform']['package_retries'] = nil
