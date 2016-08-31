@@ -6,7 +6,7 @@ description 'Install/Configure confluent-platform'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 source_url 'https://gitlab.com/s4m-chef-repositories/confluent-platform'
 issues_url 'https://gitlab.com/s4m-chef-repositories/confluent-platform/issues'
-version '2.1.0'
+version '2.2.0'
 
 supports 'centos', '>= 7.1'
 
