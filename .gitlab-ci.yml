@@ -1,38 +1,33 @@
+# Template chef 20160803
+image: sbernard/arch-kitchen-docker
+
 foodcritic:
-  tags:
-    - foodcritic
   script:
     - foodcritic .
 
 rubocop:
-  tags:
-    - rubocop
   script:
     - rubocop
 
 lines_length:
   script:
     - >
-      curl https://gitlab.com/s4m/checks/raw/master/check_lines_length.sh |
+      curl -s https://gitlab.com/s4m/checks/raw/master/check_lines_length.sh |
       bash
 
 git_history:
-  tags:
-    - git
   script:
     - >
-      curl https://gitlab.com/s4m/checks/raw/master/check_git_history.sh |
+      curl -s https://gitlab.com/s4m/checks/raw/master/check_git_history.sh |
       bash
 
 kitchen:
   tags:
-    - kitchen
     - docker
   script:
     - >
-      set +o pipefail;
-      kitchen diagnose | grep container_name | awk '{print $2}' |
-      xargs docker rm --force 2> /dev/null | rm -fr .kitchen
-    - kitchen create
-    - kitchen verify -c
-    - kitchen destroy -c
+      images=$(kitchen diagnose | grep image | cut -d':' -f2);
+      for image in $images; do
+        docker pull $image
+      done
+    - kitchen test -c -d always
