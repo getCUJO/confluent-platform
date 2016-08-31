@@ -25,6 +25,9 @@ describe 'Schema Registry' do
     expect(service('schema-registry')).to be_enabled
   end
 
+  # Relaunch schema-registry to be sure it has started with a working Kafka
+  `systemctl restart schema-registry`
+
   (1..10).each do |try|
     out = `ss -tunl | grep -- :8081`
     break unless out.empty?

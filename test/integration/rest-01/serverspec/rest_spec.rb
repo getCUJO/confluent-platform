@@ -60,8 +60,8 @@ curl = 'http_proxy="" curl -sS -X'
 header = '-H "Content-Type: application/vnd.schemaregistry.v1+json"'
 url = 'http://registry-kitchen-01.kitchen:8081'
 
-(1..5).each do |try|
-  subjects = `#{curl} GET #{header} #{url}/subjects`
+(1..10).each do |try|
+  subjects = `#{curl} GET #{header} #{url}/subjects 2> /dev/null`
   break if subjects.include?('key')
   puts "Rest waiting to Schema Registry to be ready… (##{try}/5)"
   sleep(5)
