@@ -25,6 +25,13 @@ describe 'Schema Registry' do
     expect(service('schema-registry')).to be_enabled
   end
 
+  (1..10).each do |try|
+    out = `ss -tunl | grep -- :8081`
+    break unless out.empty?
+    puts "Waiting Schema Registry to launch… (##{try}/10)"
+    sleep(5)
+  end
+
   it 'is listening on port 8081' do
     expect(port(8081)).to be_listening
   end
@@ -58,9 +65,17 @@ describe 'With Schema Registry Rest Interface' do
   schema_id = nil
 
   it 'We can register a new version of a schema under the subject "key"' do
-    id = `#{curl} POST #{header} #{data} #{url}/subjects/key/versions`
-    exp = /\{"id":(\d+)\}/
-    schema_id = exp.match(id)[1]
+    # Wait Schema Registry to be ready (max 25s)
+    match_id = []
+    (1..6).each do |try|
+      id = `#{curl} POST #{header} #{data} #{url}/subjects/key/versions`
+      exp = /\{"id":(\d+)\}/
+      match_id = exp.match(id)
+      break unless match_id.nil?
+      puts "Waiting for Schema Registry to be ready… (##{try}/5)"
+      sleep(5) unless try == 6
+    end
+    schema_id = match_id[1]
     expect(schema_id).not_to be_nil
   end
 

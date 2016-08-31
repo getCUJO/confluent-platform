@@ -25,6 +25,13 @@ describe 'Kafka Rest' do
     expect(service('kafka-rest')).to be_enabled
   end
 
+  (1..10).each do |try|
+    out = `ss -tunl | grep -- :8082`
+    break unless out.empty?
+    puts "Waiting Rest to launch… (##{try}/10)"
+    sleep(5)
+  end
+
   it 'is listening on port 8082' do
     expect(port(8082)).to be_listening
   end
@@ -46,6 +53,18 @@ describe 'Kafka Rest Configuration' do
     its(:content) { should contain 'log4j.rootLogger=INFO, stdout' }
     its(:content) { should contain '# Kitchen=true' }
   end
+end
+
+# Waiting registry to be up
+curl = 'http_proxy="" curl -sS -X'
+header = '-H "Content-Type: application/vnd.schemaregistry.v1+json"'
+url = 'http://registry-kitchen-01.kitchen:8081'
+
+(1..5).each do |try|
+  subjects = `#{curl} GET #{header} #{url}/subjects`
+  break if subjects.include?('key')
+  puts "Rest waiting to Schema Registry to be ready… (##{try}/5)"
+  sleep(5)
 end
 
 # Test if the service is working correctly with all its dependencies

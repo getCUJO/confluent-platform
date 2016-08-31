@@ -25,6 +25,13 @@ describe 'Kafka Daemon' do
     expect(service('kafka')).to be_enabled
   end
 
+  (1..10).each do |try|
+    out = `ss -tunl | grep -- :9092`
+    break unless out.empty?
+    puts "Waiting Kafka to launch… (##{try}/10)"
+    sleep(5)
+  end
+
   it 'is listening on port 9092' do
     expect(port(9092)).to be_listening
   end
