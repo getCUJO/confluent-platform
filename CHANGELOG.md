@@ -1,6 +1,22 @@
 Changelog
 =========
 
+2.1.0
+-----
+
+Main:
+
+- Default confluent version to install is set to 3.0
+  + Scala version to install is set to 2.11
+  + Mandatory option ssl.client.auth is added to registry config
+- Make Systemd unit path configurable
+
+Tests:
+
+- Start Continuous Integration with gitlab-ci
+- Add security opts for docker, add package retries
+- Remove sleep in recipes, wait to strengthen tests
+
 2.0.0
 -----
 
