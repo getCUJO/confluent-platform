@@ -16,6 +16,7 @@
 
 # Install Kafka with configured scala version
 scala_version = node.attribute['confluent-platform']['scala_version']
+
 package "confluent-kafka-#{scala_version}" do
   retries node['confluent-platform']['package_retries']
 end

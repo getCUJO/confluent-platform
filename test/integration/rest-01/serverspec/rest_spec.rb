@@ -16,6 +16,8 @@
 
 require 'spec_helper'
 
+# rubocop:disable Metrics/BlockLength
+
 describe 'Kafka Rest' do
   it 'is running' do
     expect(service('kafka-rest')).to be_running

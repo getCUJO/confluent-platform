@@ -28,20 +28,18 @@ template "#{unit_path}/kafka-rest.service" do
 end
 
 # Configuration files to be subscribed
-if node['confluent-platform']['rest']['auto_restart']
-  config_files = [
-    '/etc/kafka-rest/kafka-rest.properties',
-    '/etc/kafka-rest/log4j.properties'
-  ].map do |path|
-    "template[#{path}]"
-  end
-else config_files = []
+config_files = [
+  '/etc/kafka-rest/kafka-rest.properties',
+  '/etc/kafka-rest/log4j.properties'
+].map do |path|
+  "template[#{path}]"
 end
 
+auto_restart = node['confluent-platform']['rest']['auto_restart']
 # Enable/Start service
 service 'kafka-rest' do
   provider Chef::Provider::Service::Systemd
   supports status: true, restart: true
-  action [:enable, :start]
-  subscribes :restart, config_files
+  action %i[enable start]
+  subscribes :restart, config_files if auto_restart
 end

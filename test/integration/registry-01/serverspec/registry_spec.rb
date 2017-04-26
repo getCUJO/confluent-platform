@@ -16,6 +16,8 @@
 
 require 'spec_helper'
 
+# rubocop:disable Metrics/BlockLength
+
 describe 'Schema Registry' do
   it 'is running' do
     expect(service('schema-registry')).to be_running

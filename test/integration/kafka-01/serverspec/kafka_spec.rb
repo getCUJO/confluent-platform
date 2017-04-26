@@ -16,6 +16,8 @@
 
 require 'spec_helper'
 
+# rubocop:disable Metrics/BlockLength
+
 describe 'Kafka Daemon' do
   it 'is running' do
     expect(service('kafka')).to be_running
@@ -75,7 +77,7 @@ describe 'Kafka Cluster' do
   end
   zk = '--zookeeper zookeeper-kafka.kitchen/kafka-kitchen'
   topic = '--topic test'
-  messages = %w(test_msg) * 6
+  messages = %w[test_msg] * 6
   copts = '--from-beginning --max-messages 6'
   emute = '2> /dev/null'
   fmute = '> /dev/null  2>&1'

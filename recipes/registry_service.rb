@@ -28,20 +28,18 @@ template "#{unit_path}/schema-registry.service" do
 end
 
 # Configuration files to be subscribed
-if node['confluent-platform']['registry']['auto_restart']
-  config_files = [
-    '/etc/schema-registry/schema-registry.properties',
-    '/etc/schema-registry/log4j.properties'
-  ].map do |path|
-    "template[#{path}]"
-  end
-else config_files = []
+config_files = [
+  '/etc/schema-registry/schema-registry.properties',
+  '/etc/schema-registry/log4j.properties'
+].map do |path|
+  "template[#{path}]"
 end
 
+auto_restart = node['confluent-platform']['registry']['auto_restart']
 # Enable/Start service
 service 'schema-registry' do
   provider Chef::Provider::Service::Systemd
   supports status: true, restart: true
-  action [:enable, :start]
-  subscribes :restart, config_files
+  action %i[enable start]
+  subscribes :restart, config_files if auto_restart
 end
