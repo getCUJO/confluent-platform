@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2016 Sam4Mobile, 2017 Make.org
+# Copyright (c) 2015-2017 Sam4Mobile, 2017 Make.org
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,12 +37,11 @@ module Kitchen
         helpers = [] # No need here
         services = instances - helpers
 
-        if %i(destroy test create converge).include? action
+        if %i[destroy test create converge].include? action
           send("run_#{action}".to_sym,
                instances, services, helpers, args.first)
         else
-          run_converge(instances, services, helpers) if action == :verify
-          run_action_official(action, instances, *args) if action != :create
+          run_action_official(action, instances, *args)
         end
       end
 
@@ -54,7 +53,10 @@ module Kitchen
         run_action_official(:destroy, instances)
         run_converge(instances, services, helpers)
         run_action_official(:verify, instances)
-        run_action_official(:destroy, instances) if type == :passing
+        run_action_official(:destroy, instances) unless type == :never
+      rescue StandardError => error
+        run_action_official(:destroy, instances) if type == :always
+        raise error
       end
 
       def run_create(_instances, services, helpers, _type = nil)
@@ -63,6 +65,7 @@ module Kitchen
       end
 
       def run_converge(_instances, services, helpers, _type = nil)
+        run_create(nil, services, helpers)
         run_action_official(:converge, helpers)
         run_action_official(:converge, services)
       end
