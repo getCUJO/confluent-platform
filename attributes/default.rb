@@ -18,7 +18,7 @@
 cookbook_name = 'confluent-platform'
 
 # Confluent version and general cookbook attributes
-default[cookbook_name]['version'] = '3.0'
+default[cookbook_name]['version'] = '3.2'
 default[cookbook_name]['scala_version'] = '2.11'
 default[cookbook_name]['java']['centos'] = 'java-1.8.0-openjdk-headless'
 
