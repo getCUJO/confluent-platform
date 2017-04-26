@@ -1,9 +1,15 @@
-# Template chef 20160803
+# Template chef 20170405
 image: sbernard/arch-kitchen-docker
+
+before_script:
+  - bundle install
+
+variables:
+  CHECKS_REPO: https://gitlab.com/samuel.bernard/checks/raw/master
 
 foodcritic:
   script:
-    - foodcritic .
+    - foodcritic -f any .
 
 rubocop:
   script:
@@ -11,23 +17,24 @@ rubocop:
 
 lines_length:
   script:
-    - >
-      curl -s https://gitlab.com/s4m/checks/raw/master/check_lines_length.sh |
-      bash
+    - curl -s $CHECKS_REPO/check_lines_length.sh | bash
 
 git_history:
   script:
-    - >
-      curl -s https://gitlab.com/s4m/checks/raw/master/check_git_history.sh |
-      bash
+    - curl -s $CHECKS_REPO/check_git_history.sh | bash
 
 kitchen:
   tags:
     - docker
+  before_script:
+    - if [ ! -e /var/run/docker.sock ]; then dockerd --storage-driver=vfs & fi
+      # On shared runner running coreos, we need to add privileged in driver
+      # for centos and debian images. This may change in the future
+    - 'if uname -r | grep "coreos" > /dev/null; then
+       sed -i "/^driver:/a\\ \\ privileged: true" .kitchen.yml; fi'
   script:
     - >
-      images=$(kitchen diagnose | grep image | cut -d':' -f2);
-      for image in $images; do
-        docker pull $image
-      done
-    - kitchen test -c -d always
+      alias kitchen='bundle exec kitchen';
+      images="$(kitchen diagnose | grep '^      image:' | cut -d':' -f2)";
+      for image in $images; do docker pull $image; done
+    - bundle exec kitchen test -c -d always
