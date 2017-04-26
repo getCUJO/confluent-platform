@@ -20,7 +20,7 @@ execute 'kafka:systemd-reload' do
   action :nothing
 end
 
-unit_path = node['confluent-platform']['unit_path']
+unit_path = node[cookbook_name]['unit_path']
 template "#{unit_path}/kafka.service" do
   mode '0644'
   source 'kafka.service.erb'
@@ -35,7 +35,7 @@ config_files = [
   "template[#{path}]"
 end
 
-auto_restart = node['confluent-platform']['kafka']['auto_restart']
+auto_restart = node[cookbook_name]['kafka']['auto_restart']
 # Enable/Start service
 service 'kafka' do
   provider Chef::Provider::Service::Systemd

@@ -15,11 +15,11 @@
 #
 
 # Create kafka group & user
-group node['confluent-platform']['rest']['user'] do
+group node[cookbook_name]['rest']['user'] do
 end
 
-user node['confluent-platform']['rest']['user'] do
-  gid node['confluent-platform']['rest']['user']
+user node[cookbook_name]['rest']['user'] do
+  gid node[cookbook_name]['rest']['user']
   shell '/bin/nologin'
   system true
   action :create

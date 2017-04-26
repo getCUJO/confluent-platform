@@ -14,47 +14,50 @@
 # limitations under the License.
 #
 
+# cookbook_name alias to be similar with recipes
+cookbook_name = 'confluent-platform'
+
 # Confluent version and general cookbook attributes
-default['confluent-platform']['version'] = '3.0'
-default['confluent-platform']['scala_version'] = '2.11'
-default['confluent-platform']['java']['centos'] = 'java-1.8.0-openjdk-headless'
+default[cookbook_name]['version'] = '3.0'
+default[cookbook_name]['scala_version'] = '2.11'
+default[cookbook_name]['java']['centos'] = 'java-1.8.0-openjdk-headless'
 
 # Systemd unit file path
-default['confluent-platform']['unit_path'] = '/etc/systemd/system'
+default[cookbook_name]['unit_path'] = '/etc/systemd/system'
 
 # Cluster search configuration
 # To understand the following attributes, look at 'cluster-search' README
 
 # Zookeeper cluster
-default['confluent-platform']['zookeeper']['role'] = 'zookeeper-cluster'
-default['confluent-platform']['zookeeper']['hosts'] = []
-default['confluent-platform']['zookeeper']['size'] = 3
+default[cookbook_name]['zookeeper']['role'] = 'zookeeper-cluster'
+default[cookbook_name]['zookeeper']['hosts'] = []
+default[cookbook_name]['zookeeper']['size'] = 3
 
 # Kafka cluster
-default['confluent-platform']['kafka']['role'] = 'kafka-cluster'
-default['confluent-platform']['kafka']['hosts'] = []
-default['confluent-platform']['kafka']['size'] = 3
+default[cookbook_name]['kafka']['role'] = 'kafka-cluster'
+default[cookbook_name]['kafka']['hosts'] = []
+default[cookbook_name]['kafka']['size'] = 3
 
 # Schema Registry cluster
-default['confluent-platform']['registry']['role'] = 'schema-registry-cluster'
-default['confluent-platform']['registry']['hosts'] = []
-default['confluent-platform']['registry']['size'] = 3
+default[cookbook_name]['registry']['role'] = 'schema-registry-cluster'
+default[cookbook_name]['registry']['hosts'] = []
+default[cookbook_name]['registry']['size'] = 3
 
 # Kafka Rest cluster
-default['confluent-platform']['rest']['role'] = 'kafka-rest-cluster'
-default['confluent-platform']['rest']['hosts'] = []
-default['confluent-platform']['rest']['size'] = 3
+default[cookbook_name]['rest']['role'] = 'kafka-rest-cluster'
+default[cookbook_name]['rest']['hosts'] = []
+default[cookbook_name]['rest']['size'] = 3
 
 # Kafka configuration
 # Always use a chroot in Zookeeper
-default['confluent-platform']['kafka']['zk_chroot'] =
-  "/#{node['confluent-platform']['kafka']['role']}"
+default[cookbook_name]['kafka']['zk_chroot'] =
+  "/#{node[cookbook_name]['kafka']['role']}"
 
-default['confluent-platform']['kafka']['user'] = 'kafka'
-default['confluent-platform']['kafka']['auto_restart'] = 'true'
+default[cookbook_name]['kafka']['user'] = 'kafka'
+default[cookbook_name]['kafka']['auto_restart'] = 'true'
 
 # Kafka configuration, default provided by Kafka project
-default['confluent-platform']['kafka']['config'] = {
+default[cookbook_name]['kafka']['config'] = {
   'broker.id' => 0,
   'port' => 9092,
   'num.network.threads' => 3,
@@ -74,7 +77,7 @@ default['confluent-platform']['kafka']['config'] = {
 }
 
 # Kafka JVM configuration
-default['confluent-platform']['kafka']['jvm_opts'] = {
+default[cookbook_name]['kafka']['jvm_opts'] = {
   '-Xms4g' => nil,
   '-Xmx4g' => nil,
   '-XX:+UseG1GC' => nil,
@@ -83,7 +86,7 @@ default['confluent-platform']['kafka']['jvm_opts'] = {
 }
 
 # Kafka JMX configuration
-default['confluent-platform']['kafka']['jmx_opts'] = {
+default[cookbook_name]['kafka']['jmx_opts'] = {
   '-Dcom.sun.management.jmxremote' => nil,
   '-Dcom.sun.management.jmxremote.authenticate' => false,
   '-Dcom.sun.management.jmxremote.ssl' => false,
@@ -92,7 +95,7 @@ default['confluent-platform']['kafka']['jmx_opts'] = {
 }
 
 # Kafka log4j configuration
-default['confluent-platform']['kafka']['log4j'] = {
+default[cookbook_name]['kafka']['log4j'] = {
   'kafka.logs.dir' => '/var/log/kafka',
   'log4j.rootLogger' => 'INFO, stdout ',
   'log4j.appender.stdout' => 'org.apache.log4j.ConsoleAppender',
@@ -153,9 +156,9 @@ default['confluent-platform']['kafka']['log4j'] = {
 }
 
 # Schema Registry configuration
-default['confluent-platform']['registry']['user'] = 'schema-registry'
-default['confluent-platform']['registry']['auto_restart'] = 'true'
-default['confluent-platform']['registry']['config'] = {
+default[cookbook_name]['registry']['user'] = 'schema-registry'
+default[cookbook_name]['registry']['auto_restart'] = 'true'
+default[cookbook_name]['registry']['config'] = {
   'port' => '8081',
   'ssl.client.auth' => false,
   'kafkastore.connection.url' => 'localhost:2181',
@@ -163,7 +166,7 @@ default['confluent-platform']['registry']['config'] = {
   'debug' => 'false'
 }
 
-default['confluent-platform']['registry']['log4j'] = {
+default[cookbook_name]['registry']['log4j'] = {
   'log4j.rootLogger' => 'INFO, stdout',
   'log4j.appender.stdout' => 'org.apache.log4j.ConsoleAppender',
   'log4j.appender.stdout.layout' => 'org.apache.log4j.PatternLayout',
@@ -177,7 +180,7 @@ default['confluent-platform']['registry']['log4j'] = {
 }
 
 # Schema Registry JVM configuration
-default['confluent-platform']['registry']['jvm_opts'] = {
+default[cookbook_name]['registry']['jvm_opts'] = {
   '-Xms1g' => nil,
   '-Xmx1g' => nil,
   '-XX:+UseG1GC' => nil,
@@ -186,7 +189,7 @@ default['confluent-platform']['registry']['jvm_opts'] = {
 }
 
 # Schema Registry JMX configuration
-default['confluent-platform']['registry']['jmx_opts'] = {
+default[cookbook_name]['registry']['jmx_opts'] = {
   '-Dcom.sun.management.jmxremote' => nil,
   '-Dcom.sun.management.jmxremote.authenticate' => false,
   '-Dcom.sun.management.jmxremote.ssl' => false,
@@ -195,10 +198,10 @@ default['confluent-platform']['registry']['jmx_opts'] = {
 }
 
 # Kafka Rest configuration
-default['confluent-platform']['rest']['user'] = 'kafka-rest'
-default['confluent-platform']['rest']['auto_restart'] = 'true'
-default['confluent-platform']['rest']['config'] = {}
-default['confluent-platform']['rest']['log4j'] = {
+default[cookbook_name]['rest']['user'] = 'kafka-rest'
+default[cookbook_name]['rest']['auto_restart'] = 'true'
+default[cookbook_name]['rest']['config'] = {}
+default[cookbook_name]['rest']['log4j'] = {
   'log4j.rootLogger' => 'INFO, stdout',
   'log4j.appender.stdout' => 'org.apache.log4j.ConsoleAppender',
   'log4j.appender.stdout.layout' => 'org.apache.log4j.PatternLayout',
@@ -206,7 +209,7 @@ default['confluent-platform']['rest']['log4j'] = {
 }
 
 # Kafka Rest JVM configuration
-default['confluent-platform']['rest']['jvm_opts'] = {
+default[cookbook_name]['rest']['jvm_opts'] = {
   '-Xms1g' => nil,
   '-Xmx1g' => nil,
   '-XX:+UseG1GC' => nil,
@@ -215,7 +218,7 @@ default['confluent-platform']['rest']['jvm_opts'] = {
 }
 
 # Kafka Rest JMX configuration
-default['confluent-platform']['rest']['jmx_opts'] = {
+default[cookbook_name]['rest']['jmx_opts'] = {
   '-Dcom.sun.management.jmxremote' => nil,
   '-Dcom.sun.management.jmxremote.authenticate' => false,
   '-Dcom.sun.management.jmxremote.ssl' => false,
@@ -225,4 +228,4 @@ default['confluent-platform']['rest']['jmx_opts'] = {
 
 # Configure retries for the package resources, default = global default (0)
 # (mostly used for test purpose)
-default['confluent-platform']['package_retries'] = nil
+default[cookbook_name]['package_retries'] = nil

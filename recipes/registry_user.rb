@@ -15,11 +15,11 @@
 #
 
 # Create schema-registry group & user
-group node['confluent-platform']['registry']['user'] do
+group node[cookbook_name]['registry']['user'] do
 end
 
-user node['confluent-platform']['registry']['user'] do
-  gid node['confluent-platform']['registry']['user']
+user node[cookbook_name]['registry']['user'] do
+  gid node[cookbook_name]['registry']['user']
   shell '/bin/nologin'
   system true
   action :create

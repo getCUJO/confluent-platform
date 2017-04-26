@@ -18,27 +18,27 @@
 ::Chef::Recipe.send(:include, ClusterSearch)
 
 # Get default configuration
-config = node['confluent-platform']['rest']['config'].to_hash
+config = node[cookbook_name]['rest']['config'].to_hash
 
 # Search other Kafka Rest
-rest = cluster_search(node['confluent-platform']['rest'])
+rest = cluster_search(node[cookbook_name]['rest'])
 return if rest.nil? # Not enough nodes
 config['id'] = "kafka-rest-#{rest['my_id']}"
 
 # Search Schema Registry
-registry = cluster_search(node['confluent-platform']['registry'])
+registry = cluster_search(node[cookbook_name]['registry'])
 return if registry.nil? # Not enough nodes
 registry_connection = registry['hosts'].map do |host|
-  "http://#{host}:#{node['confluent-platform']['registry']['config']['port']}"
+  "http://#{host}:#{node[cookbook_name]['registry']['config']['port']}"
 end.join(',')
 config['schema.registry.url'] = registry_connection
 
 # Search Zookeeper cluster
-zookeeper = cluster_search(node['confluent-platform']['zookeeper'])
+zookeeper = cluster_search(node[cookbook_name]['zookeeper'])
 return if zookeeper.nil? # Not enough nodes
 zk_connection = zookeeper['hosts'].map do |host|
   "#{host}:2181"
-end.join(',') + node['confluent-platform']['kafka']['zk_chroot']
+end.join(',') + node[cookbook_name]['kafka']['zk_chroot']
 config['zookeeper.connect'] = zk_connection
 
 # Write configuration
@@ -51,5 +51,5 @@ end
 template '/etc/kafka-rest/log4j.properties' do
   source 'properties.erb'
   mode '644'
-  variables config: node['confluent-platform']['rest']['log4j']
+  variables config: node[cookbook_name]['rest']['log4j']
 end

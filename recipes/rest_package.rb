@@ -16,5 +16,5 @@
 
 # Install Kafka Rest package
 package 'confluent-kafka-rest' do
-  retries node['confluent-platform']['package_retries']
+  retries node[cookbook_name]['package_retries']
 end

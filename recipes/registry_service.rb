@@ -20,7 +20,7 @@ execute 'registry:systemd-reload' do
   action :nothing
 end
 
-unit_path = node['confluent-platform']['unit_path']
+unit_path = node[cookbook_name]['unit_path']
 template "#{unit_path}/schema-registry.service" do
   mode '0644'
   source 'schema-registry.service.erb'
@@ -35,7 +35,7 @@ config_files = [
   "template[#{path}]"
 end
 
-auto_restart = node['confluent-platform']['registry']['auto_restart']
+auto_restart = node[cookbook_name]['registry']['auto_restart']
 # Enable/Start service
 service 'schema-registry' do
   provider Chef::Provider::Service::Systemd

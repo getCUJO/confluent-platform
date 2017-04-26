@@ -15,9 +15,9 @@
 #
 
 # Java is needed by all components of confluent. We may install it with package
-java_package = node['confluent-platform']['java'][node['platform']]
+java_package = node[cookbook_name]['java'][node['platform']]
 
 package java_package do
-  retries node['confluent-platform']['package_retries']
+  retries node[cookbook_name]['package_retries']
   not_if { java_package.to_s.empty? }
 end

@@ -18,14 +18,14 @@
 ::Chef::Recipe.send(:include, ClusterSearch)
 
 # Get default configuration
-config = node['confluent-platform']['registry']['config'].to_hash
+config = node[cookbook_name]['registry']['config'].to_hash
 
 # Search Zookeeper cluster
-zookeeper = cluster_search(node['confluent-platform']['zookeeper'])
+zookeeper = cluster_search(node[cookbook_name]['zookeeper'])
 return if zookeeper.nil? # Not enough nodes
 zk_connection = zookeeper['hosts'].map do |host|
   "#{host}:2181"
-end.join(',') + node['confluent-platform']['kafka']['zk_chroot']
+end.join(',') + node[cookbook_name]['kafka']['zk_chroot']
 config['kafkastore.connection.url'] = zk_connection
 
 # Write configuration
@@ -38,5 +38,5 @@ end
 template '/etc/schema-registry/log4j.properties' do
   source 'properties.erb'
   mode '644'
-  variables config: node['confluent-platform']['registry']['log4j']
+  variables config: node[cookbook_name]['registry']['log4j']
 end

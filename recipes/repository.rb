@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-version = node.attribute['confluent-platform']['version']
+version = node.attribute[cookbook_name]['version']
 
 case node['platform_family']
 when 'rhel'

@@ -18,18 +18,18 @@
 ::Chef::Recipe.send(:include, ClusterSearch)
 
 # Get default configuration
-config = node['confluent-platform']['kafka']['config'].to_hash
+config = node[cookbook_name]['kafka']['config'].to_hash
 
 # Search Zookeeper cluster
-zookeeper = cluster_search(node['confluent-platform']['zookeeper'])
+zookeeper = cluster_search(node[cookbook_name]['zookeeper'])
 return if zookeeper.nil? # Not enough nodes
 zk_connection = zookeeper['hosts'].map do |host|
   "#{host}:2181"
-end.join(',') + node['confluent-platform']['kafka']['zk_chroot']
+end.join(',') + node[cookbook_name]['kafka']['zk_chroot']
 config['zookeeper.connect'] = zk_connection
 
 # Search other Kafka
-kafka = cluster_search(node['confluent-platform']['kafka'])
+kafka = cluster_search(node[cookbook_name]['kafka'])
 return if kafka.nil? # Not enough nodes
 config['broker.id'] = kafka['my_id']
 
@@ -43,16 +43,16 @@ end
 template '/etc/kafka/log4j.properties' do
   source 'properties.erb'
   mode '644'
-  variables config: node['confluent-platform']['kafka']['log4j']
+  variables config: node[cookbook_name]['kafka']['log4j']
 end
 
 # Create Kafka work directories with correct ownership
-data_dir = node['confluent-platform']['kafka']['config']['log.dirs']
-log_dir = node['confluent-platform']['kafka']['log4j']['kafka.logs.dir']
+data_dir = node[cookbook_name]['kafka']['config']['log.dirs']
+log_dir = node[cookbook_name]['kafka']['log4j']['kafka.logs.dir']
 [data_dir, log_dir].each do |dir|
   directory dir do
-    owner node['confluent-platform']['kafka']['user']
-    group node['confluent-platform']['kafka']['user']
+    owner node[cookbook_name]['kafka']['user']
+    group node[cookbook_name]['kafka']['user']
     mode '0755'
     recursive true
     action :create
