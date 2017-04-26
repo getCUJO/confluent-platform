@@ -27,6 +27,9 @@ describe 'Kafka Rest' do
     expect(service('kafka-rest')).to be_enabled
   end
 
+  # Relaunch kafka-rest to be sure it has started with a working Kafka
+  `systemctl restart kafka-rest`
+
   (1..10).each do |try|
     out = `ss -tunl | grep -- :8082`
     break unless out.empty?
@@ -105,6 +108,8 @@ describe 'With Kafka Rest' do
     end
   end
 
+  sleep(5) # I know ...
+
   # Test consumers
   values.each do |id, value|
     it "We can create a #{id} consumer and get some messages with it" do
@@ -126,8 +131,10 @@ describe 'With Kafka Rest' do
 
       # Consume messages
       read = `#{curl} GET #{consume_header} #{instance}/topics/test-#{id}`
+      k = '"key":null'
+      t = '"topic":null'
       expect(read).to match(
-        /\[({"key":null,"value":#{value},"partition":\d+,"offset":\d+},?)+\]/
+        /\[({#{k},"value":#{value},"partition":\d+,"offset":\d+,#{t}},?)+\]/
       )
     end
   end
