@@ -19,6 +19,11 @@ require 'spec_helper'
 # rubocop:disable Metrics/BlockLength
 
 describe 'Schema Registry' do
+  # Relaunch schema-registry if it failed to be sure it had a working Kafka
+  if `systemctl show schema-registry -p ExecMainStatus` == 'ExecMainStatus=1'
+    `systemctl restart schema-registry`
+  end
+
   it 'is running' do
     expect(service('schema-registry')).to be_running
   end
@@ -26,9 +31,6 @@ describe 'Schema Registry' do
   it 'is launched at boot' do
     expect(service('schema-registry')).to be_enabled
   end
-
-  # Relaunch schema-registry to be sure it has started with a working Kafka
-  `systemctl restart schema-registry`
 
   (1..10).each do |try|
     out = `ss -tunl | grep -- :8081`

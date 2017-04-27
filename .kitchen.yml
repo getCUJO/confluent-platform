@@ -58,10 +58,12 @@ suites:
       zookeeper-platform:
         hosts: zookeeper-kafka.kitchen
         package_retries: 1
+        jvm_opts:
+          -Xmx128m:
 
   # True tests begin here
 # Generate different types of nodes
-<% { 'kafka' => 3, 'registry' => 1, 'rest' => 1 }.each do |name, n| %>
+<% { 'kafka' => 2, 'registry' => 1, 'rest' => 1 }.each do |name, n| %>
   <% ("01".."#{n}").each do |i| %>
   - name: <%= name %>-<%= i %>
     driver:
@@ -72,5 +74,17 @@ suites:
     attributes:
       confluent-platform:
         package_retries: 1
+        kafka:
+          jvm_opts:
+            -Xmx384m:
+            -Xms64m:
+        registry:
+          jvm_opts:
+            -Xmx128m:
+            -Xms64m:
+        rest:
+          jvm_opts:
+            -Xmx128m:
+            -Xms64m:
   <% end %>
 <% end %>

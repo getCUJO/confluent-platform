@@ -19,6 +19,11 @@ require 'spec_helper'
 # rubocop:disable Metrics/BlockLength
 
 describe 'Kafka Rest' do
+  # Relaunch kafka-rest if it failed to be sure it had a working Kafka
+  if `systemctl show kafka-rest -p ExecMainStatus` == 'ExecMainStatus=1'
+    `systemctl restart kafka-rest`
+  end
+
   it 'is running' do
     expect(service('kafka-rest')).to be_running
   end
@@ -26,9 +31,6 @@ describe 'Kafka Rest' do
   it 'is launched at boot' do
     expect(service('kafka-rest')).to be_enabled
   end
-
-  # Relaunch kafka-rest to be sure it has started with a working Kafka
-  `systemctl restart kafka-rest`
 
   (1..10).each do |try|
     out = `ss -tunl | grep -- :8082`
@@ -99,16 +101,18 @@ describe 'With Kafka Rest' do
           "\"records\":[{\"value\":#{values['avro']}}]}"
       }
 
-      offsets = `#{curl} POST #{header} --data '#{data[id]}' "#{topic_url}"`
-      exp = /{"offsets":
+      (1..10).each do |_|
+        offsets = `#{curl} POST #{header} --data '#{data[id]}' "#{topic_url}"`
+        exp = /{"offsets":
         \[{"partition":\d+,"offset":\d+,"error_code":null,"error":null}\],
         "key_schema_id":null,"value_schema_id":
         #{id == 'avro' ? '\d+' : 'null'}}/x
-      expect(offsets).to match(exp)
+        expect(offsets).to match(exp)
+      end
     end
   end
 
-  sleep(5) # I know ...
+  sleep(60)
 
   # Test consumers
   values.each do |id, value|
@@ -128,6 +132,8 @@ describe 'With Kafka Rest' do
       create = `#{curl} POST #{create_header} #{data} #{consumer}`
       exp = "{\"instance_id\":\"#{id}\",\"base_uri\":\"#{instance}\"}"
       expect(create).to eq(exp)
+
+      sleep(60)
 
       # Consume messages
       read = `#{curl} GET #{consume_header} #{instance}/topics/test-#{id}`

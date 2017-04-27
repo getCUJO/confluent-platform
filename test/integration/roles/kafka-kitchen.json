@@ -10,11 +10,13 @@
       },
       "kafka": {
         "role": "kafka-kitchen",
-        "size": 3,
+        "size": 2,
         "config": {
-          "num.partitions": 3,
-          "default.replication.factor": 3,
-          "auto.create.topics.enable": "true"
+          "num.partitions": 2,
+          "default.replication.factor": 2,
+          "auto.create.topics.enable": "true",
+          "num.network.threads": 2,
+          "num.io.threads": 2
         },
         "log4j": {
           "# Kitchen": "true"

@@ -46,13 +46,13 @@ describe 'Kafka Configuration' do
 
     broker.id=1
     port=9092
-    num.network.threads=3
-    num.io.threads=8
+    num.network.threads=2
+    num.io.threads=2
     socket.send.buffer.bytes=102400
     socket.receive.buffer.bytes=102400
     socket.request.max.bytes=104857600
     log.dirs=/var/lib/kafka
-    num.partitions=3
+    num.partitions=2
     num.recovery.threads.per.data.dir=1
     log.retention.hours=168
     log.segment.bytes=1073741824
@@ -60,7 +60,7 @@ describe 'Kafka Configuration' do
     log.cleaner.enable=false
     zookeeper.connect=zookeeper-kafka.kitchen:2181/kafka-kitchen
     zookeeper.connection.timeout.ms=6000
-    default.replication.factor=3
+    default.replication.factor=2
     auto.create.topics.enable=true
     eos
   end
@@ -89,13 +89,13 @@ describe 'Kafka Cluster' do
       res &= system(
         "echo #{m} | kafka-console-producer #{brokers[i]} #{topic} #{fmute}"
       )
-      i = (i + 1) % 3
+      i = (i + 1) % 2
     end
     expect(res).to eq(true)
   end
 
   it 'Topic "test" should have been created' do
-    expected = ['Topic:test', 'PartitionCount:3', 'ReplicationFactor:3']
+    expected = ['Topic:test', 'PartitionCount:2', 'ReplicationFactor:2']
     topics = `kafka-topics --describe #{zk} #{topic} #{emute}`.split[0..2]
     expect(topics).to eq(expected)
   end
