@@ -76,22 +76,51 @@ default[cookbook_name]['kafka']['config'] = {
   'zookeeper.connection.timeout.ms' => 6_000
 }
 
-# Kafka JVM configuration
-default[cookbook_name]['kafka']['jvm_opts'] = {
-  '-Xms4g' => nil,
-  '-Xmx4g' => nil,
-  '-XX:+UseG1GC' => nil,
+# CLI options which will be defined in Systemd unit
+# Those options will be transformed:
+# - all key value pair are merged to create a single command line
+# - if value is 'nil' (string nil), the key is ignored (erase the option)
+# - if value is empty, the value is ignored but the key is outputted
+# - if key and value are defined, key=value is generated
+# The reason for string 'nil' is because using true nil will not override
+# a previously defined non-nil value.
+default[cookbook_name]['kafka']['cli_opts'] = {
+  '-Xms4g' => '',
+  '-Xmx4g' => '',
+  '-XX:+UseG1GC' => '',
   '-XX:MaxGCPauseMillis' => 20,
-  '-XX:InitiatingHeapOccupancyPercent' => 35
-}
-
-# Kafka JMX configuration
-default[cookbook_name]['kafka']['jmx_opts'] = {
-  '-Dcom.sun.management.jmxremote' => nil,
+  '-XX:InitiatingHeapOccupancyPercent' => 35,
+  '-Dcom.sun.management.jmxremote' => '',
   '-Dcom.sun.management.jmxremote.authenticate' => false,
   '-Dcom.sun.management.jmxremote.ssl' => false,
   '-Dcom.sun.management.jmxremote.port' => 8090,
   '-Djava.rmi.server.hostname' => node['fqdn']
+}
+
+# Kafka Systemd service unit, can include all JVM options in ExecStart
+# by using cli_opts
+# You can override java path and kafka options by overriding ExecStart values
+default[cookbook_name]['kafka']['unit'] = {
+  'Unit' => {
+    'Description' => 'Kafka publish-subscribe messaging system',
+    'After' => 'network.target'
+  },
+  'Service' => {
+    'User' => node[cookbook_name]['kafka']['user'],
+    'Group' => node[cookbook_name]['kafka']['user'],
+    'SyslogIdentifier' => 'kafka',
+    'Restart' => 'on-failure',
+    'ExecStart' => {
+      'start' => '/usr/bin/java',
+      'end' =>
+        '-Dlog4j.configuration=file:/etc/kafka/log4j.properties '\
+        '-cp /usr/share/java/kafka/* '\
+        'kafka.Kafka /etc/kafka/server.properties'
+    }
+  },
+  'Install' => {
+    'WantedBy' => 'multi-user.target'
+  }
 }
 
 # Kafka log4j configuration

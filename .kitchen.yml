@@ -75,9 +75,12 @@ suites:
       confluent-platform:
         package_retries: 1
         kafka:
-          jvm_opts:
-            -Xmx384m:
-            -Xms64m:
+          auto_restart: true
+          cli_opts:
+            -Xmx4g: nil
+            -Xms4g: nil
+            -Xmx384m: ''
+            -Xms64m: ''
         registry:
           jvm_opts:
             -Xmx128m:

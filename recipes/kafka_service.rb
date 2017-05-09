@@ -14,32 +14,35 @@
 # limitations under the License.
 #
 
-# Install service file, reload systemd daemon if necessary
-execute 'kafka:systemd-reload' do
-  command 'systemctl daemon-reload'
-  action :nothing
-end
-
-unit_path = node[cookbook_name]['unit_path']
-template "#{unit_path}/kafka.service" do
-  mode '0644'
-  source 'kafka.service.erb'
-  notifies :run, 'execute[kafka:systemd-reload]', :immediately
-end
-
 # Configuration files to be subscribed
 config_files = [
   '/etc/kafka/server.properties',
-  '/etc/kafka/log4j.properties'
+  '/etc/kafka/log4j.properties',
+  '/etc/systemd/system/kafka.service'
 ].map do |path|
   "template[#{path}]"
 end
 
+# Configure systemd unit with options
+unit = node[cookbook_name]['kafka']['unit'].to_hash
+unit['Service']['ExecStart'] = [
+  unit['Service']['ExecStart']['start'],
+  node[cookbook_name]['kafka']['cli_opts'].map do |key, opt|
+    # remove key if value is string 'nil' (using 'string' is not a bug)
+    "#{key}#{"=#{opt}" unless opt.to_s.empty?}" unless opt == 'nil'
+  end,
+  unit['Service']['ExecStart']['end']
+].flatten.compact.join(" \\\n  ")
+
 auto_restart = node[cookbook_name]['kafka']['auto_restart']
-# Enable/Start service
-service 'kafka' do
-  provider Chef::Provider::Service::Systemd
-  supports status: true, restart: true, reload: true
-  action %i[enable start]
+# Create unit
+systemd_unit 'kafka.service' do
+  enabled true
+  active true
+  masked false
+  static false
+  content unit
+  triggers_reload true
+  action %i[create enable start]
   subscribes :restart, config_files if auto_restart
 end
