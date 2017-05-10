@@ -33,18 +33,24 @@ kafka = cluster_search(node[cookbook_name]['kafka'])
 return if kafka.nil? # Not enough nodes
 config['broker.id'] = kafka['my_id']
 
-# Write configuration
-template '/etc/kafka/server.properties' do
-  source 'properties.erb'
-  mode '644'
-  variables config: config
+# Write configurations
+files = {
+  '/etc/kafka/server.properties' => config,
+  '/etc/kafka/log4j.properties' => node[cookbook_name]['kafka']['log4j']
+}
+
+files.each do |file, conf|
+  template file do
+    source 'properties.erb'
+    mode '644'
+    variables config: conf
+  end
 end
 
-template '/etc/kafka/log4j.properties' do
-  source 'properties.erb'
-  mode '644'
-  variables config: node[cookbook_name]['kafka']['log4j']
-end
+# To be used in service
+node.run_state[cookbook_name] ||= {}
+node.run_state[cookbook_name]['kafka'] ||= {}
+node.run_state[cookbook_name]['kafka']['conf_files'] = files.keys
 
 # Create Kafka work directories with correct ownership
 data_dir = node[cookbook_name]['kafka']['config']['log.dirs']

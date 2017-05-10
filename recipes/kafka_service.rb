@@ -14,29 +14,28 @@
 # limitations under the License.
 #
 
+node.run_state[cookbook_name] ||= {}
+component = node.run_state[cookbook_name]['component'] || 'kafka'
+
 # Configuration files to be subscribed
-config_files = [
-  '/etc/kafka/server.properties',
-  '/etc/kafka/log4j.properties',
-  '/etc/systemd/system/kafka.service'
-].map do |path|
-  "template[#{path}]"
-end
+node.run_state[cookbook_name][component] ||= {}
+conf_files = node.run_state[cookbook_name][component]['conf_files']
+template_files = conf_files.map { |path| "template[#{path}]" }
 
 # Configure systemd unit with options
-unit = node[cookbook_name]['kafka']['unit'].to_hash
+unit = node[cookbook_name][component]['unit'].to_hash
 unit['Service']['ExecStart'] = [
   unit['Service']['ExecStart']['start'],
-  node[cookbook_name]['kafka']['cli_opts'].map do |key, opt|
+  node[cookbook_name][component]['cli_opts'].map do |key, opt|
     # remove key if value is string 'nil' (using 'string' is not a bug)
     "#{key}#{"=#{opt}" unless opt.to_s.empty?}" unless opt == 'nil'
   end,
   unit['Service']['ExecStart']['end']
 ].flatten.compact.join(" \\\n  ")
 
-auto_restart = node[cookbook_name]['kafka']['auto_restart']
+auto_restart = node[cookbook_name][component]['auto_restart']
 # Create unit
-systemd_unit 'kafka.service' do
+systemd_unit "#{component}.service" do
   enabled true
   active true
   masked false
@@ -44,5 +43,5 @@ systemd_unit 'kafka.service' do
   content unit
   triggers_reload true
   action %i[create enable start]
-  subscribes :restart, config_files if auto_restart
+  subscribes :restart, template_files if auto_restart
 end
