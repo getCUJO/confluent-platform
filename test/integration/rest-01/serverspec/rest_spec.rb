@@ -112,8 +112,6 @@ describe 'With Kafka Rest' do
     end
   end
 
-  sleep(60)
-
   # Test consumers
   values.each do |id, value|
     it "We can create a #{id} consumer and get some messages with it" do
@@ -132,8 +130,6 @@ describe 'With Kafka Rest' do
       create = `#{curl} POST #{create_header} #{data} #{consumer}`
       exp = "{\"instance_id\":\"#{id}\",\"base_uri\":\"#{instance}\"}"
       expect(create).to eq(exp)
-
-      sleep(60)
 
       # Consume messages
       read = `#{curl} GET #{consume_header} #{instance}/topics/test-#{id}`
