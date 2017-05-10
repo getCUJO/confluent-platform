@@ -15,33 +15,42 @@
 #
 
 node.run_state[cookbook_name] ||= {}
-component = node.run_state[cookbook_name]['component'] || 'kafka'
+components = node.run_state[cookbook_name]['components'] || []
 
-# Configuration files to be subscribed
-node.run_state[cookbook_name][component] ||= {}
-conf_files = node.run_state[cookbook_name][component]['conf_files']
-template_files = conf_files.map { |path| "template[#{path}]" }
+components.each do |component|
+  # Configuration files to be subscribed
+  node.run_state[cookbook_name][component] ||= {}
+  conf_files = node.run_state[cookbook_name][component]['conf_files']
+  template_files = conf_files.map { |path| "template[#{path}]" }
 
-# Configure systemd unit with options
-unit = node[cookbook_name][component]['unit'].to_hash
-unit['Service']['ExecStart'] = [
-  unit['Service']['ExecStart']['start'],
-  node[cookbook_name][component]['cli_opts'].map do |key, opt|
-    # remove key if value is string 'nil' (using 'string' is not a bug)
-    "#{key}#{"=#{opt}" unless opt.to_s.empty?}" unless opt == 'nil'
-  end,
-  unit['Service']['ExecStart']['end']
-].flatten.compact.join(" \\\n  ")
+  # Configure systemd unit with options
+  unit = node[cookbook_name][component]['unit'].to_hash
+  unit['Service']['ExecStart'] = [
+    unit['Service']['ExecStart']['start'],
+    node[cookbook_name][component]['cli_opts'].map do |key, opt|
+      # remove key if value is string 'nil' (using 'string' is not a bug)
+      "#{key}#{"=#{opt}" unless opt.to_s.empty?}" unless opt == 'nil'
+    end,
+    unit['Service']['ExecStart']['end']
+  ].flatten.compact.join(" \\\n  ")
 
-auto_restart = node[cookbook_name][component]['auto_restart']
-# Create unit
-systemd_unit "#{component}.service" do
-  enabled true
-  active true
-  masked false
-  static false
-  content unit
-  triggers_reload true
-  action %i[create enable start]
-  subscribes :restart, template_files if auto_restart
+  auto_restart = node[cookbook_name][component]['auto_restart']
+  # Create unit
+  unit_name =
+    case component
+    when 'rest' then 'kafka-rest'
+    when 'registry' then 'schema-registry'
+    else component
+    end
+
+  systemd_unit "#{unit_name}.service" do
+    enabled true
+    active true
+    masked false
+    static false
+    content unit
+    triggers_reload true
+    action %i[create enable start]
+    subscribes :restart, template_files if auto_restart
+  end
 end

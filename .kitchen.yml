@@ -82,12 +82,18 @@ suites:
             -Xmx384m: ''
             -Xms64m: ''
         registry:
-          jvm_opts:
-            -Xmx128m:
-            -Xms64m:
+          auto_restart: true
+          cli_opts:
+            -Xmx1g: nil
+            -Xms1g: nil
+            -Xmx128m: ''
+            -Xms64m: ''
         rest:
-          jvm_opts:
-            -Xmx128m:
-            -Xms64m:
+          auto_restart: true
+          cli_opts:
+            -Xmx1g: nil
+            -Xms1g: nil
+            -Xmx128m: ''
+            -Xms64m: ''
   <% end %>
 <% end %>

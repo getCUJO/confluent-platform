@@ -28,15 +28,22 @@ zk_connection = zookeeper['hosts'].map do |host|
 end.join(',') + node[cookbook_name]['kafka']['zk_chroot']
 config['kafkastore.connection.url'] = zk_connection
 
-# Write configuration
-template '/etc/schema-registry/schema-registry.properties' do
-  source 'properties.erb'
-  mode '644'
-  variables config: config
+# Write configurations
+files = {
+  '/etc/schema-registry/schema-registry.properties' => config,
+  '/etc/schema-registry/log4j.properties' =>
+    node[cookbook_name]['registry']['log4j']
+}
+
+files.each do |file, conf|
+  template file do
+    source 'properties.erb'
+    mode '644'
+    variables config: conf
+  end
 end
 
-template '/etc/schema-registry/log4j.properties' do
-  source 'properties.erb'
-  mode '644'
-  variables config: node[cookbook_name]['registry']['log4j']
-end
+# To be used in service
+node.run_state[cookbook_name] ||= {}
+node.run_state[cookbook_name]['registry'] ||= {}
+node.run_state[cookbook_name]['registry']['conf_files'] = files.keys

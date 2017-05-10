@@ -15,6 +15,10 @@
 #
 
 # Stand-alone meta-recipe to install Kafka and configure it
+node.run_state[cookbook_name] ||= {}
+node.run_state[cookbook_name]['components'] ||= []
+node.run_state[cookbook_name]['components'] << 'kafka'
+
 include_recipe "#{cookbook_name}::repository"
 include_recipe "#{cookbook_name}::kafka_package"
 include_recipe "#{cookbook_name}::kafka_user"

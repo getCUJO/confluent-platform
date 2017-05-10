@@ -41,15 +41,21 @@ zk_connection = zookeeper['hosts'].map do |host|
 end.join(',') + node[cookbook_name]['kafka']['zk_chroot']
 config['zookeeper.connect'] = zk_connection
 
-# Write configuration
-template '/etc/kafka-rest/kafka-rest.properties' do
-  source 'properties.erb'
-  mode '644'
-  variables config: config
+# Write configurations
+files = {
+  '/etc/kafka-rest/kafka-rest.properties' => config,
+  '/etc/kafka-rest/log4j.properties' => node[cookbook_name]['rest']['log4j']
+}
+
+files.each do |file, conf|
+  template file do
+    source 'properties.erb'
+    mode '644'
+    variables config: conf
+  end
 end
 
-template '/etc/kafka-rest/log4j.properties' do
-  source 'properties.erb'
-  mode '644'
-  variables config: node[cookbook_name]['rest']['log4j']
-end
+# To be used in service
+node.run_state[cookbook_name] ||= {}
+node.run_state[cookbook_name]['rest'] ||= {}
+node.run_state[cookbook_name]['rest']['conf_files'] = files.keys

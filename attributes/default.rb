@@ -208,22 +208,48 @@ default[cookbook_name]['registry']['log4j'] = {
   'log4j.additivity.kafka.consumer.ZookeeperConsumerConnector' => 'false'
 }
 
-# Schema Registry JVM configuration
-default[cookbook_name]['registry']['jvm_opts'] = {
-  '-Xms1g' => nil,
-  '-Xmx1g' => nil,
-  '-XX:+UseG1GC' => nil,
+# Schema Registry CLI configuration (see kafka cli_opts for documentation)
+default[cookbook_name]['registry']['cli_opts'] = {
+  '-Xms1g' => '',
+  '-Xmx1g' => '',
+  '-XX:+UseG1GC' => '',
   '-XX:MaxGCPauseMillis' => 20,
-  '-XX:InitiatingHeapOccupancyPercent' => 35
-}
-
-# Schema Registry JMX configuration
-default[cookbook_name]['registry']['jmx_opts'] = {
-  '-Dcom.sun.management.jmxremote' => nil,
+  '-XX:InitiatingHeapOccupancyPercent' => 35,
+  '-Dcom.sun.management.jmxremote' => '',
   '-Dcom.sun.management.jmxremote.authenticate' => false,
   '-Dcom.sun.management.jmxremote.ssl' => false,
   '-Dcom.sun.management.jmxremote.port' => 8091,
   '-Djava.rmi.server.hostname' => node['fqdn']
+}
+
+# Kafka Systemd service unit, can include all JVM options in ExecStart
+cp = ['confluent-common', 'rest-utils', 'schema-registry'].map do |path|
+  "/usr/share/java/#{path}/*"
+end.join(':')
+
+default[cookbook_name]['registry']['unit'] = {
+  'Unit' => {
+    'Description' =>
+      'Schema Registry provides a serving layer for your metadata',
+    'After' => 'network.target'
+  },
+  'Service' => {
+    'User' => node[cookbook_name]['registry']['user'],
+    'Group' => node[cookbook_name]['registry']['user'],
+    'SyslogIdentifier' => 'schema-registry',
+    'Restart' => 'on-failure',
+    'ExecStart' => {
+      'start' => '/usr/bin/java',
+      'end' =>
+        '-Dlog4j.configuration=file:/etc/schema-registry/log4j.properties ' \
+        "-cp #{cp} " \
+        'io.confluent.kafka.schemaregistry.rest.Main ' \
+        '/etc/schema-registry/schema-registry.properties'
+    }
+  },
+  'Install' => {
+    'WantedBy' => 'multi-user.target'
+  }
 }
 
 # Kafka Rest configuration
@@ -237,22 +263,48 @@ default[cookbook_name]['rest']['log4j'] = {
   'log4j.appender.stdout.layout.ConversionPattern' => '[%d] %p %m (%c:%L)%n'
 }
 
-# Kafka Rest JVM configuration
-default[cookbook_name]['rest']['jvm_opts'] = {
-  '-Xms1g' => nil,
-  '-Xmx1g' => nil,
-  '-XX:+UseG1GC' => nil,
+# Kafka Rest CLI configuration (see kafka cli_opts for documentation)
+default[cookbook_name]['rest']['cli_opts'] = {
+  '-Xms1g' => '',
+  '-Xmx1g' => '',
+  '-XX:+UseG1GC' => '',
   '-XX:MaxGCPauseMillis' => 20,
-  '-XX:InitiatingHeapOccupancyPercent' => 35
-}
-
-# Kafka Rest JMX configuration
-default[cookbook_name]['rest']['jmx_opts'] = {
-  '-Dcom.sun.management.jmxremote' => nil,
+  '-XX:InitiatingHeapOccupancyPercent' => 35,
+  '-Dcom.sun.management.jmxremote' => '',
   '-Dcom.sun.management.jmxremote.authenticate' => false,
   '-Dcom.sun.management.jmxremote.ssl' => false,
   '-Dcom.sun.management.jmxremote.port' => 8092,
   '-Djava.rmi.server.hostname' => node['fqdn']
+}
+
+# Rest Systemd service unit, can include all JVM options in ExecStart
+cp = ['confluent-common', 'rest-utils', 'kafka-rest'].map do |path|
+  "/usr/share/java/#{path}/*"
+end.join(':')
+
+default[cookbook_name]['rest']['unit'] = {
+  'Unit' => {
+    'Description' =>
+      'The Kafka REST Proxy provides a RESTful interface to a Kafka',
+    'After' => 'network.target'
+  },
+  'Service' => {
+    'User' => node[cookbook_name]['rest']['user'],
+    'Group' => node[cookbook_name]['rest']['user'],
+    'SyslogIdentifier' => 'kafka-rest',
+    'Restart' => 'on-failure',
+    'ExecStart' => {
+      'start' => '/usr/bin/java',
+      'end' =>
+        '-Dlog4j.configuration=file:/etc/kafka-rest/log4j.properties ' \
+        "-cp #{cp} " \
+        'io.confluent.kafkarest.Main ' \
+        '/etc/kafka-rest/kafka-rest.properties'
+    }
+  },
+  'Install' => {
+    'WantedBy' => 'multi-user.target'
+  }
 }
 
 # Configure retries for the package resources, default = global default (0)
