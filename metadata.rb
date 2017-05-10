@@ -8,9 +8,8 @@ source_url 'https://gitlab.com/chef-platform/confluent-platform'
 issues_url 'https://gitlab.com/chef-platform/confluent-platform/issues'
 version '2.2.0'
 
-chef_version '>= 12.0'
+chef_version '>= 12.14'
 
 supports 'centos', '>= 7.1'
 
 depends 'cluster-search'
-depends 'yum'

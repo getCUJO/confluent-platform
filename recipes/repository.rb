@@ -18,7 +18,6 @@ version = node.attribute[cookbook_name]['version']
 
 case node['platform_family']
 when 'rhel'
-  include_recipe 'yum'
   yum_repository 'confluent' do
     description "Confluent platform v#{version} repository"
     baseurl "http://packages.confluent.io/rpm/#{version}"
