@@ -14,14 +14,9 @@
 # limitations under the License.
 #
 
-# Stand-alone meta-recipe to install Kafka Schema Registry and configure it
-node.run_state[cookbook_name] ||= {}
-node.run_state[cookbook_name]['components'] ||= []
-node.run_state[cookbook_name]['components'] << 'registry'
-
 include_recipe "#{cookbook_name}::repository"
 include_recipe "#{cookbook_name}::registry_package"
 include_recipe "#{cookbook_name}::registry_user"
 include_recipe "#{cookbook_name}::registry_config"
 include_recipe "#{cookbook_name}::java"
-include_recipe "#{cookbook_name}::kafka_service"
+include_recipe "#{cookbook_name}::registry_service"

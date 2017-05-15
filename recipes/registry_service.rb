@@ -14,4 +14,4 @@
 # limitations under the License.
 #
 
-confluent_platform_service 'kafka'
+confluent_platform_service 'registry'
