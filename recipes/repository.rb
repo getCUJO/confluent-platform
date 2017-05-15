@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-version = node.attribute[cookbook_name]['version']
+version = node.attribute[cookbook_name]['version'].split('.')[0..1].join('.')
 
 case node['platform_family']
 when 'rhel'
