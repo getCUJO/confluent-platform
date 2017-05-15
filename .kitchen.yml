@@ -75,6 +75,9 @@ suites:
       confluent-platform:
         package_retries: 1
         kafka:
+          config:
+            request.timeout.ms: 300_000
+            zookeeper.connection.timeout.ms: 60_000
           auto_restart: true
           cli_opts:
             -Xmx4g: nil

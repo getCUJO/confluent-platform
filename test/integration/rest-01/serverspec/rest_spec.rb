@@ -101,14 +101,16 @@ describe 'With Kafka Rest' do
           "\"records\":[{\"value\":#{values['avro']}}]}"
       }
 
+      res = false
       (1..10).each do |_|
         offsets = `#{curl} POST #{header} --data '#{data[id]}' "#{topic_url}"`
         exp = /{"offsets":
         \[{"partition":\d+,"offset":\d+,"error_code":null,"error":null}\],
         "key_schema_id":null,"value_schema_id":
         #{id == 'avro' ? '\d+' : 'null'}}/x
-        expect(offsets).to match(exp)
+        res ||= !offsets.match(exp).nil?
       end
+      expect(res).to be(true)
     end
   end
 
@@ -132,7 +134,13 @@ describe 'With Kafka Rest' do
       expect(create).to eq(exp)
 
       # Consume messages
-      read = `#{curl} GET #{consume_header} #{instance}/topics/test-#{id}`
+      read = ''
+      (1..10).each do |_try|
+        read = `#{curl} GET #{consume_header} #{instance}/topics/test-#{id}`
+        break unless read.empty? || read == '[]'
+        sleep(10)
+      end
+
       k = '"key":null'
       t = '"topic":null'
       expect(read).to match(
