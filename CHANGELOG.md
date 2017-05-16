@@ -1,6 +1,32 @@
 Changelog
 =========
 
+2.2.0
+-----
+
+Main:
+
+- Handover maintainance to Make.org
+- Use confluent 3.2.1 by default, fix repository
+- Fix metadata: license and set correct chef\_version (12.14)
+- Remove yum cookbook dependency
+- Refactoring services, use systemd\_unit resource
+  + Factorize code by using a custom resource
+
+Tests:
+
+- Set build\_pull & always\_update in tests config
+- Fix destroy in tests, stop converge in verify
+- Use latest template for .gitlab-ci.yml [20170405]
+- Fix #1: Fix kitchen tests (nondeterministic)
+- Reduce memory usage for tests
+- Make tests work in Gitlab CI shared runners
+
+Misc:
+
+- Fix misc rubocop offenses
+- Use cookbook\_name alias everywhere
+
 2.1.0
 -----
 
