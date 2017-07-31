@@ -20,7 +20,7 @@ require 'spec_helper'
 
 describe 'Schema Registry' do
   # Relaunch schema-registry if it failed to be sure it had a working Kafka
-  if `systemctl show schema-registry -p ExecMainStatus` == 'ExecMainStatus=1'
+  if `systemctl show schema-registry -p ExecMainStatus` != 'ExecMainStatus=0'
     `systemctl restart schema-registry`
   end
 

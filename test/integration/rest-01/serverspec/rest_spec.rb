@@ -21,7 +21,7 @@ require 'json'
 
 describe 'Kafka Rest' do
   # Relaunch kafka-rest if it failed to be sure it had a working Kafka
-  if `systemctl show kafka-rest -p ExecMainStatus` == 'ExecMainStatus=1'
+  if `systemctl show kafka-rest -p ExecMainStatus` != 'ExecMainStatus=0'
     `systemctl restart kafka-rest`
   end
 
