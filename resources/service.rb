@@ -17,10 +17,16 @@
 property :component, String, name_property: true
 
 action :create do # rubocop:disable Metrics/BlockLength
+  component = new_resource.component
+
   # Configuration files to be subscribed
+  node.run_state[cookbook_name] ||= {}
   node.run_state[cookbook_name][component] ||= {}
   conf_files = node.run_state[cookbook_name][component]['conf_files']
-  template_files = conf_files.map { |path| "template[#{path}]" }
+  template_files = (conf_files || {}).map { |path| "template[#{path}]" }
+
+  # return if something was interrupted (config probably)
+  return if node.run_state[cookbook_name][component]['interrupted']
 
   # Configure systemd unit with options
   unit = node[cookbook_name][component]['unit'].to_hash

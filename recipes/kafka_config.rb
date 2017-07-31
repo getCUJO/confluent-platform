@@ -14,6 +14,13 @@
 # limitations under the License.
 #
 
+# To be used in service
+node.run_state[cookbook_name] ||= {}
+node.run_state[cookbook_name]['kafka'] ||= {}
+
+# Will be set to false if searchs succeed, at the end of this recipe
+node.run_state[cookbook_name]['kafka']['interrupted'] = true
+
 # Use ClusterSearch
 ::Chef::Recipe.send(:include, ClusterSearch)
 
@@ -38,6 +45,7 @@ files = {
   '/etc/kafka/server.properties' => config,
   '/etc/kafka/log4j.properties' => node[cookbook_name]['kafka']['log4j']
 }
+node.run_state[cookbook_name]['kafka']['conf_files'] = files.keys
 
 files.each do |file, conf|
   template file do
@@ -46,11 +54,6 @@ files.each do |file, conf|
     variables config: conf
   end
 end
-
-# To be used in service
-node.run_state[cookbook_name] ||= {}
-node.run_state[cookbook_name]['kafka'] ||= {}
-node.run_state[cookbook_name]['kafka']['conf_files'] = files.keys
 
 # Create Kafka work directories with correct ownership
 data_dir = node[cookbook_name]['kafka']['config']['log.dirs']
@@ -64,3 +67,6 @@ log_dir = node[cookbook_name]['kafka']['log4j']['kafka.logs.dir']
     action :create
   end
 end
+
+# Everything was fine
+node.run_state[cookbook_name]['kafka']['interrupted'] = false

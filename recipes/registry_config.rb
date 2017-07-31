@@ -14,6 +14,13 @@
 # limitations under the License.
 #
 
+# To be used in service
+node.run_state[cookbook_name] ||= {}
+node.run_state[cookbook_name]['registry'] ||= {}
+
+# Will be set to false if searchs succeed, at the end of this recipe
+node.run_state[cookbook_name]['registry']['interrupted'] = true
+
 # Use ClusterSearch
 ::Chef::Recipe.send(:include, ClusterSearch)
 
@@ -34,6 +41,7 @@ files = {
   '/etc/schema-registry/log4j.properties' =>
     node[cookbook_name]['registry']['log4j']
 }
+node.run_state[cookbook_name]['registry']['conf_files'] = files.keys
 
 files.each do |file, conf|
   template file do
@@ -43,7 +51,5 @@ files.each do |file, conf|
   end
 end
 
-# To be used in service
-node.run_state[cookbook_name] ||= {}
-node.run_state[cookbook_name]['registry'] ||= {}
-node.run_state[cookbook_name]['registry']['conf_files'] = files.keys
+# Everything was fine
+node.run_state[cookbook_name]['registry']['interrupted'] = false

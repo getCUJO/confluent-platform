@@ -14,6 +14,13 @@
 # limitations under the License.
 #
 
+# To be used in service
+node.run_state[cookbook_name] ||= {}
+node.run_state[cookbook_name]['rest'] ||= {}
+
+# Will be set to false if searchs succeed, at the end of this recipe
+node.run_state[cookbook_name]['rest']['interrupted'] = true
+
 # Use ClusterSearch
 ::Chef::Recipe.send(:include, ClusterSearch)
 
@@ -46,6 +53,7 @@ files = {
   '/etc/kafka-rest/kafka-rest.properties' => config,
   '/etc/kafka-rest/log4j.properties' => node[cookbook_name]['rest']['log4j']
 }
+node.run_state[cookbook_name]['rest']['conf_files'] = files.keys
 
 files.each do |file, conf|
   template file do
@@ -55,7 +63,5 @@ files.each do |file, conf|
   end
 end
 
-# To be used in service
-node.run_state[cookbook_name] ||= {}
-node.run_state[cookbook_name]['rest'] ||= {}
-node.run_state[cookbook_name]['rest']['conf_files'] = files.keys
+# Everything was fine
+node.run_state[cookbook_name]['rest']['interrupted'] = false
