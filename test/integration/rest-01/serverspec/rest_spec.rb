@@ -15,6 +15,7 @@
 #
 
 require 'spec_helper'
+require 'json'
 
 # rubocop:disable Metrics/BlockLength
 
@@ -70,7 +71,7 @@ url = 'http://registry-kitchen-01.kitchen:8081'
 (1..10).each do |try|
   subjects = `#{curl} GET #{header} #{url}/subjects 2> /dev/null`
   break if subjects.include?('key')
-  puts "Rest waiting to Schema Registry to be ready… (##{try}/5)"
+  puts "Rest waiting to Schema Registry to be ready… (##{try}/10)"
   sleep(5)
 end
 
@@ -85,7 +86,7 @@ describe 'With Kafka Rest' do
   end
 
   # Values send to Kafka
-  values = { 'binary' => '"S2Fma2E="', 'avro' => '{"name":"testUser"}' }
+  values = { 'binary' => 'S2Fma2E=', 'avro' => { 'name' => 'testUser' } }
 
   # Test producers
   values.each do |id, _value|
@@ -95,20 +96,21 @@ describe 'With Kafka Rest' do
 
       # Data field used by our producers
       data = {
-        'binary' => "{\"records\":[{\"value\":#{values['binary']}}]}",
-        'avro' => '{"value_schema":"{\"type\":\"record\",\"name\":\"User\",' \
-          '\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}",' \
-          "\"records\":[{\"value\":#{values['avro']}}]}"
+        'binary' => JSON.dump('records' => [{ 'value' => values['binary'] }]),
+        'avro' => JSON.dump(
+          'value_schema' => JSON.dump(
+            'type' => 'record',
+            'name' => 'User',
+            'fields' => [{ 'name' => 'name', 'type' => 'string' }]
+          ),
+          'records' => [{ 'value' => values['avro'] }]
+        )
       }
 
       res = false
       (1..10).each do |_|
         offsets = `#{curl} POST #{header} --data '#{data[id]}' "#{topic_url}"`
-        exp = /{"offsets":
-        \[{"partition":\d+,"offset":\d+,"error_code":null,"error":null}\],
-        "key_schema_id":null,"value_schema_id":
-        #{id == 'avro' ? '\d+' : 'null'}}/x
-        res ||= !offsets.match(exp).nil?
+        res ||= JSON.parse(offsets)['error_code'].nil?
       end
       expect(res).to be(true)
     end
@@ -120,8 +122,12 @@ describe 'With Kafka Rest' do
       # Specific variables
       create_header = '-H "Content-Type: application/vnd.kafka.v1+json"'
       consume_header = "-H 'Accept: application/vnd.kafka.#{id}.v1+json'"
-      data = "--data '{\"id\": \"#{id}\", \"format\": \"#{id}\", " \
-        "\"auto.offset.reset\": \"smallest\"}'"
+      data = {
+        'id' => id,
+        'format' => id,
+        'auto.offset.reset' => 'smallest'
+      }
+      data = "--data '#{JSON.dump(data)}'"
       consumer = "#{url}/consumers/#{id}_consumer"
       instance = "#{consumer}/instances/#{id}"
 
@@ -129,9 +135,9 @@ describe 'With Kafka Rest' do
       `#{curl} DELETE #{instance}`
 
       # Create the consumer
-      create = `#{curl} POST #{create_header} #{data} #{consumer}`
-      exp = "{\"instance_id\":\"#{id}\",\"base_uri\":\"#{instance}\"}"
-      expect(create).to eq(exp)
+      create = JSON.parse(`#{curl} POST #{create_header} #{data} #{consumer}`)
+      expect(create['instance_id']).to eq(id)
+      expect(create['base_uri']).to eq(instance)
 
       # Consume messages
       read = ''
@@ -141,11 +147,17 @@ describe 'With Kafka Rest' do
         sleep(10)
       end
 
-      k = '"key":null'
-      t = '"topic":null'
-      expect(read).to match(
-        /\[({#{k},"value":#{value},"partition":\d+,"offset":\d+,#{t}},?)+\]/
-      )
+      res = JSON.parse(read)
+      expect(res).not_to be_empty
+
+      unless res.empty?
+        item = res.first
+        expect(item['key']).to be_nil
+        expect(item['topic']).to eq("test-#{id}")
+        expect(item['value']).to eq(value)
+        expect(item['partition']).to be >= 0
+        expect(item['offset']).to be >= 0
+      end
     end
   end
 end
