@@ -16,7 +16,8 @@
 
 # Install Kafka with configured scala version
 scala_version = node.attribute[cookbook_name]['scala_version']
+package_retries = node[cookbook_name]['package_retries']
 
 package "confluent-kafka-#{scala_version}" do
-  retries node[cookbook_name]['package_retries']
+  retries package_retries unless package_retries.nil?
 end

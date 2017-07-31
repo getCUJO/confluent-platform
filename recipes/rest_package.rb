@@ -14,7 +14,9 @@
 # limitations under the License.
 #
 
+package_retries = node[cookbook_name]['package_retries']
+
 # Install Kafka Rest package
 package 'confluent-kafka-rest' do
-  retries node[cookbook_name]['package_retries']
+  retries package_retries unless package_retries.nil?
 end

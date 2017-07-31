@@ -14,7 +14,9 @@
 # limitations under the License.
 #
 
+package_retries = node[cookbook_name]['package_retries']
+
 # Install Kafka with configured scala version
 package 'confluent-schema-registry' do
-  retries node[cookbook_name]['package_retries']
+  retries package_retries unless package_retries.nil?
 end
