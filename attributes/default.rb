@@ -31,7 +31,7 @@ default[cookbook_name]['unit_path'] = '/etc/systemd/system'
 # Zookeeper cluster
 default[cookbook_name]['zookeeper']['role'] = 'zookeeper-cluster'
 default[cookbook_name]['zookeeper']['hosts'] = []
-default[cookbook_name]['zookeeper']['size'] = 3
+default[cookbook_name]['zookeeper']['size'] = 0
 
 # Kafka cluster
 default[cookbook_name]['kafka']['role'] = 'kafka-cluster'
@@ -41,12 +41,12 @@ default[cookbook_name]['kafka']['size'] = 3
 # Schema Registry cluster
 default[cookbook_name]['registry']['role'] = 'schema-registry-cluster'
 default[cookbook_name]['registry']['hosts'] = []
-default[cookbook_name]['registry']['size'] = 3
+default[cookbook_name]['registry']['size'] = 1
 
 # Kafka Rest cluster
 default[cookbook_name]['rest']['role'] = 'kafka-rest-cluster'
 default[cookbook_name]['rest']['hosts'] = []
-default[cookbook_name]['rest']['size'] = 3
+default[cookbook_name]['rest']['size'] = 1
 
 # Kafka configuration
 # Always use a chroot in Zookeeper
