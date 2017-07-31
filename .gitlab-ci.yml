@@ -1,4 +1,4 @@
-# Template chef 20170405
+# Template chef 20170731
 image: sbernard/arch-kitchen-docker
 
 before_script:
@@ -27,7 +27,8 @@ kitchen:
   tags:
     - docker
   before_script:
-    - if [ ! -e /var/run/docker.sock ]; then dockerd --storage-driver=vfs & fi
+    - bundle install
+    - if [ ! -e /var/run/docker.sock ]; then DOCKER_DRIVER=vfs dockerd & fi
       # On shared runner running coreos, we need to add privileged in driver
       # for centos and debian images. This may change in the future
     - 'if uname -r | grep "coreos" > /dev/null; then
@@ -35,6 +36,6 @@ kitchen:
   script:
     - >
       alias kitchen='bundle exec kitchen';
-      images="$(kitchen diagnose | grep '^      image:' | cut -d':' -f2)";
-      for image in $images; do docker pull $image; done
+      imgs="$(kitchen diagnose | grep '^      image:' | cut -d':' -f2 | uniq)";
+      for image in $imgs; do docker pull $image; done
     - bundle exec kitchen test -c -d always
