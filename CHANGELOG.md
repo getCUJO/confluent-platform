@@ -1,6 +1,28 @@
 Changelog
 =========
 
+2.3.0
+-----
+
+Main:
+
+- set confluent default version to 3.3.0
+- fix(Chef 13): do not set retries if package\_retries is nil
+- fix #2: setting java to "" work as expected
+- fix #3: nil error when search return to wait nodes
+
+Tests:
+
+- force molinillo to be < 0.6.0 to fix tests
+- fix condition to restart a service in tests
+- use .gitlab-ci.yml template [20170731]
+- strengthen rest test by parsing JSON
+
+Misc:
+
+- change default size for search
+- set new contributing guide with karma style
+
 2.2.0
 -----
 
