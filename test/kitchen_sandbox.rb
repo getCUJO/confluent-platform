@@ -54,7 +54,7 @@ module Kitchen
 
         def generate_node(suite)
           return nil if nil_value?(suite)
-          <<-eos.gsub(/^ {10}/, '')
+          <<-JSON.gsub(/^ {10}/, '')
           {
             "id": "#{suite[:driver][:hostname]}",
             "automatic": {
@@ -62,7 +62,7 @@ module Kitchen
               "roles": #{roles(suite)}
             }
           }
-          eos
+          JSON
         end
 
         def nil_value?(suite)

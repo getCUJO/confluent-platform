@@ -47,14 +47,14 @@ end
 
 describe 'Kafka Rest Configuration' do
   describe file('/etc/kafka-rest/kafka-rest.properties') do
-    its(:content) { should eq <<-eos.gsub(/^ {4}/, '') }
+    its(:content) { should eq <<-PROP.gsub(/^ {4}/, '') }
     # Produced by Chef -- changes will be overwritten
 
     port=8082
     id=kafka-rest-1
     schema.registry.url=http://registry-kitchen-01.kitchen:8081
     zookeeper.connect=zookeeper-kafka.kitchen:2181/kafka-kitchen
-    eos
+    PROP
   end
 
   describe file('/etc/kafka-rest/log4j.properties') do
@@ -89,7 +89,7 @@ describe 'With Kafka Rest' do
   values = { 'binary' => 'S2Fma2E=', 'avro' => { 'name' => 'testUser' } }
 
   # Test producers
-  values.each do |id, _value|
+  values.each_key do |id|
     it "We can produce a #{id} message to the topic test-#{id}" do
       header = "-H 'Content-Type: application/vnd.kafka.#{id}.v1+json'"
       topic_url = "#{url}/topics/test-#{id}"

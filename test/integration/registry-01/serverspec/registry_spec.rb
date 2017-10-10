@@ -46,7 +46,7 @@ end
 
 describe 'Schema Registry Configuration' do
   describe file('/etc/schema-registry/schema-registry.properties') do
-    its(:content) { should eq <<-eos.gsub(/^ {4}/, '') }
+    its(:content) { should eq <<-PROP.gsub(/^ {4}/, '') }
     # Produced by Chef -- changes will be overwritten
 
     port=8081
@@ -55,7 +55,7 @@ describe 'Schema Registry Configuration' do
     kafkastore.topic=_schemas
     debug=false
     avro.compatibility.level=backward
-    eos
+    PROP
   end
 
   describe file('/etc/schema-registry/log4j.properties') do

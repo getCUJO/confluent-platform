@@ -41,7 +41,7 @@ end
 
 describe 'Kafka Configuration' do
   describe file('/etc/kafka/server.properties') do
-    its(:content) { should contain <<-eos.gsub(/^ {4}/, '') }
+    its(:content) { should contain <<-PROP.gsub(/^ {4}/, '') }
     # Produced by Chef -- changes will be overwritten
 
     broker.id=1
@@ -62,7 +62,7 @@ describe 'Kafka Configuration' do
     zookeeper.connection.timeout.ms=60000
     default.replication.factor=2
     auto.create.topics.enable=true
-    eos
+    PROP
   end
 
   describe file('/etc/kafka/log4j.properties') do
