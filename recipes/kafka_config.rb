@@ -58,7 +58,7 @@ end
 # Create Kafka work directories with correct ownership
 data_dir = node[cookbook_name]['kafka']['config']['log.dirs']
 log_dir = node[cookbook_name]['kafka']['log4j']['kafka.logs.dir']
-[data_dir, log_dir].each do |dir|
+[data_dir, log_dir].compact.each do |dir|
   directory dir do
     owner node[cookbook_name]['kafka']['user']
     group node[cookbook_name]['kafka']['user']
