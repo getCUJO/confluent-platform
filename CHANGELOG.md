@@ -1,6 +1,18 @@
 Changelog
 =========
 
+2.4.0
+-----
+
+Main:
+
+- fix: do not try to create a nil directory (aka do not need to have
+  kafka.logs.dir key in kafka/log4j configuration)
+
+Misc:
+
+- style(rubocop): fix latest offences, mostly heredoc delimiters
+
 2.3.0
 -----
 
