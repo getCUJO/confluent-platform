@@ -35,11 +35,6 @@ zk_connection = zookeeper['hosts'].map do |host|
 end.join(',') + node[cookbook_name]['kafka']['zk_chroot']
 config['zookeeper.connect'] = zk_connection
 
-# Search other Kafka
-kafka = cluster_search(node[cookbook_name]['kafka'])
-return if kafka.nil? # Not enough nodes
-config['broker.id'] = kafka['my_id']
-
 # Write configurations
 files = {
   '/etc/kafka/server.properties' => config,

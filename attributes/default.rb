@@ -58,7 +58,7 @@ default[cookbook_name]['kafka']['auto_restart'] = 'true'
 
 # Kafka configuration, default provided by Kafka project
 default[cookbook_name]['kafka']['config'] = {
-  'broker.id' => 0,
+  'broker.id' => -1,
   'port' => 9092,
   'num.network.threads' => 3,
   'num.io.threads' => 8,
