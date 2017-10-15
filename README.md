@@ -90,11 +90,10 @@ list of hostnames or by using a search on a role.
 This cookbook is fully tested through the installation of the full platform
 in docker hosts. This uses kitchen, docker and some monkey-patching.
 
-If you run `kitchen list`, you will see 6 suites:
+If you run `kitchen list`, you will see 5 suites:
 - zookeeper-centos-7
 - kafka-01-centos-7
 - kafka-02-centos-7
-- kafka-03-centos-7
 - registry-01-centos-7
 - rest-01-centos-7
 
