@@ -1,6 +1,30 @@
 Changelog
 =========
 
+2.5.0
+-----
+
+Breaking changes:
+
+- drop support for Kakfa < 0.9.0
+
+Main:
+
+- feat: use auto-generated broker.id by default
+  + Stop using search IDs to set broker.id. Set it by default to -1 to let
+    Kafka generates it itself.
+  + You can override this behavior by setting kafka/config/broker.id to the
+    ID you want for each node.
+  + Note: Setting the broker id to -1 should not affect an existing cluster
+    that is already running. The auto broker ID generation is only used when
+    there is no known broker ID. If you had a previously assigned ID, it
+    will keep that ID.
+
+Misc:
+
+- docs: minor fix on kitchen suites description
+- test: revert condition on molinillo to be < 0.6.0
+
 2.4.0
 -----
 
