@@ -1,4 +1,4 @@
-# Template chef 20170731
+# Template chef 20180111
 image: sbernard/arch-kitchen-docker
 
 before_script:
@@ -27,6 +27,12 @@ kitchen:
   tags:
     - docker
   before_script:
+    - >
+      curl -s $CHECKS_REPO/Gemfile_patches | while read line; do
+        if ! cat Gemfile | grep "$line"; then
+          echo "$line" >> Gemfile
+        fi
+      done
     - bundle install
     - if [ ! -e /var/run/docker.sock ]; then DOCKER_DRIVER=vfs dockerd & fi
       # On shared runner running coreos, we need to add privileged in driver
@@ -35,7 +41,7 @@ kitchen:
        sed -i "/^driver:/a\\ \\ privileged: true" .kitchen.yml; fi'
   script:
     - >
-      alias kitchen='bundle exec kitchen';
-      imgs="$(kitchen diagnose | grep '^      image:' | cut -d':' -f2 | uniq)";
+      imgs="$(bundle exec kitchen diagnose | grep '^      image:' | \
+            cut -d':' -f2 | uniq)";
       for image in $imgs; do docker pull $image; done
     - bundle exec kitchen test -c -d always
