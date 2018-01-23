@@ -28,7 +28,8 @@ when 'debian'
   apt_repository 'confluent' do
     uri "http://packages.confluent.io/deb/#{version}"
     components %w[stable main]
-    arch 'all'
+    arch 'amd64'
+    distribution nil
     key "http://packages.confluent.io/deb/#{version}/archive.key"
   end
 end
