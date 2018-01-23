@@ -49,12 +49,12 @@ describe 'Schema Registry Configuration' do
     its(:content) { should eq <<-PROP.gsub(/^ {4}/, '') }
     # Produced by Chef -- changes will be overwritten
 
-    port=8081
-    ssl.client.auth=false
+    avro.compatibility.level=backward
+    debug=false
     kafkastore.connection.url=zookeeper-kafka.kitchen:2181/kafka-kitchen
     kafkastore.topic=_schemas
-    debug=false
-    avro.compatibility.level=backward
+    port=8081
+    ssl.client.auth=false
     PROP
   end
 

@@ -44,25 +44,25 @@ describe 'Kafka Configuration' do
     its(:content) { should contain <<-PROP.gsub(/^ {4}/, '') }
     # Produced by Chef -- changes will be overwritten
 
+    auto.create.topics.enable=true
     broker.id=-1
-    port=9092
-    num.network.threads=2
-    num.io.threads=2
-    socket.send.buffer.bytes=102400
-    socket.receive.buffer.bytes=102400
-    socket.request.max.bytes=104857600
+    default.replication.factor=2
+    log.cleaner.enable=false
     log.dirs=/var/lib/kafka
-    num.partitions=2
-    num.recovery.threads.per.data.dir=1
+    log.retention.check.interval.ms=300000
     log.retention.hours=168
     log.segment.bytes=1073741824
-    log.retention.check.interval.ms=300000
-    log.cleaner.enable=false
+    num.io.threads=2
+    num.network.threads=2
+    num.partitions=2
+    num.recovery.threads.per.data.dir=1
+    port=9092
+    request.timeout.ms=300000
+    socket.receive.buffer.bytes=102400
+    socket.request.max.bytes=104857600
+    socket.send.buffer.bytes=102400
     zookeeper.connect=zookeeper-kafka.kitchen:2181/kafka-kitchen
     zookeeper.connection.timeout.ms=60000
-    default.replication.factor=2
-    auto.create.topics.enable=true
-    request.timeout.ms=300000
     PROP
   end
 

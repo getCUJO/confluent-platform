@@ -59,7 +59,7 @@ files.each do |file, conf|
   template file do
     source 'properties.erb'
     mode '644'
-    variables config: conf
+    variables config: conf.sort.to_h
   end
 end
 

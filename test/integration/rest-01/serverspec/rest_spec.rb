@@ -50,8 +50,8 @@ describe 'Kafka Rest Configuration' do
     its(:content) { should eq <<-PROP.gsub(/^ {4}/, '') }
     # Produced by Chef -- changes will be overwritten
 
-    port=8082
     id=kafka-rest-1
+    port=8082
     schema.registry.url=http://registry-kitchen-01.kitchen:8081
     zookeeper.connect=zookeeper-kafka.kitchen:2181/kafka-kitchen
     PROP
