@@ -107,3 +107,5 @@ describe 'Kafka Cluster' do
     expect(output).to eq(messages.sort)
   end
 end
+
+# rubocop:enable Metrics/BlockLength

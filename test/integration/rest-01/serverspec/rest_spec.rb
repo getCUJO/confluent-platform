@@ -161,3 +161,5 @@ describe 'With Kafka Rest' do
     end
   end
 end
+
+# rubocop:enable Metrics/BlockLength

@@ -136,3 +136,5 @@ describe 'With Schema Registry Rest Interface' do
     expect(compatible).to eq('{"is_compatible":true}')
   end
 end
+
+# rubocop:enable Metrics/BlockLength
