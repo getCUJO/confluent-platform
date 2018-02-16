@@ -1,4 +1,4 @@
-# Template chef 20180111
+# Template chef 20180209
 image: sbernard/arch-kitchen-docker
 
 before_script:
@@ -9,11 +9,11 @@ variables:
 
 foodcritic:
   script:
-    - foodcritic -f any .
+    - bundle exec foodcritic -f any .
 
 rubocop:
   script:
-    - rubocop
+    - bundle exec rubocop
 
 lines_length:
   script:
@@ -23,7 +23,12 @@ git_history:
   script:
     - curl -s $CHECKS_REPO/check_git_history.sh | bash
 
+rspec:
+  script:
+    - bundle exec rspec
+
 kitchen:
+  retry: 2
   tags:
     - docker
   before_script:
@@ -34,6 +39,10 @@ kitchen:
         fi
       done
     - bundle install
+      # Mount host kernel modules which may be needed by docker
+    - mkdir -p /mnt/host
+    - mount /dev/dm-0 /mnt/host
+    - ln -s /mnt/host/lib/modules /lib/modules
     - if [ ! -e /var/run/docker.sock ]; then DOCKER_DRIVER=vfs dockerd & fi
       # On shared runner running coreos, we need to add privileged in driver
       # for centos and debian images. This may change in the future
