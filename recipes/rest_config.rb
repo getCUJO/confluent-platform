@@ -48,13 +48,15 @@ zk_connection = zookeeper['hosts'].map do |host|
 end.join(',') + node[cookbook_name]['kafka']['zk_chroot']
 config['zookeeper.connect'] = zk_connection
 
-# Search Kafka cluster
+# Search Kafka brokers
 kafka_brokers = cluster_search(node[cookbook_name]['kafka'])
-return if kafka_brokers.nil? # Not enough nodes
-kafka_connection = kafka_brokers['hosts'].map do |host|
-  "PLAINTEXT://#{host}:#{node[cookbook_name]['kafka']['config']['port']}"
-end.join(',')
-config['bootstrap.servers'] = kafka_connection
+unless kafka_brokers.nil? # Not enough nodes but this option is optional
+  protocol = node[cookbook_name]['rest']['brokers_protocol']
+  kafka_connection = kafka_brokers['hosts'].map do |host|
+    "#{protocol}://#{host}:#{node[cookbook_name]['kafka']['config']['port']}"
+  end.join(',')
+  config['bootstrap.servers'] = kafka_connection
+end
 
 # Write configurations
 files = {

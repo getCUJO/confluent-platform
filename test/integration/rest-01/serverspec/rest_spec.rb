@@ -47,9 +47,14 @@ end
 
 describe 'Kafka Rest Configuration' do
   describe file('/etc/kafka-rest/kafka-rest.properties') do
+    # rubocop:disable Style/FormatStringToken
+    bootstrap = 'PLAINTEXT://kafka-kitchen-0%d.kitchen:9092'
+    # rubocop:enable Style/FormatStringToken
+
     its(:content) { should eq <<-PROP.gsub(/^ {4}/, '') }
     # Produced by Chef -- changes will be overwritten
 
+    bootstrap.servers=#{format("#{bootstrap},#{bootstrap}", 1, 2)}
     id=kafka-rest-1
     port=8082
     schema.registry.url=http://registry-kitchen-01.kitchen:8081

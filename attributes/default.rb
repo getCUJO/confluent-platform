@@ -36,7 +36,7 @@ default[cookbook_name]['zookeeper']['size'] = 0
 # Kafka cluster
 default[cookbook_name]['kafka']['role'] = 'kafka-cluster'
 default[cookbook_name]['kafka']['hosts'] = []
-default[cookbook_name]['kafka']['size'] = 3
+default[cookbook_name]['kafka']['size'] = 0
 
 # Schema Registry cluster
 default[cookbook_name]['registry']['role'] = 'schema-registry-cluster'
@@ -256,6 +256,9 @@ default[cookbook_name]['registry']['unit'] = {
 default[cookbook_name]['rest']['user'] = 'kafka-rest'
 default[cookbook_name]['rest']['auto_restart'] = 'true'
 default[cookbook_name]['rest']['config'] = {}
+# Protocol exposed by brokers, can be PLAINTEXT or SSL (not both)
+# used by bootstrap.servers option
+default[cookbook_name]['rest']['brokers_protocol'] = 'PLAINTEXT'
 default[cookbook_name]['rest']['log4j'] = {
   'log4j.rootLogger' => 'INFO, stdout',
   'log4j.appender.stdout' => 'org.apache.log4j.ConsoleAppender',
