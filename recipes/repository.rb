@@ -27,9 +27,9 @@ when 'rhel'
 when 'debian'
   apt_repository 'confluent' do
     uri "http://packages.confluent.io/deb/#{version}"
-    components %w[stable main]
+    components %w[main]
     arch 'amd64'
-    distribution 'debian'
+    distribution 'stable'
     key "http://packages.confluent.io/deb/#{version}/archive.key"
   end
 end
