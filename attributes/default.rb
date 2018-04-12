@@ -234,6 +234,9 @@ default[cookbook_name]['registry']['unit'] = {
     'After' => 'network.target'
   },
   'Service' => {
+    'PermissionsStartOnly' => 'true'
+    'ExecStartPre' => '/bin/mkdir -p /var/log/schema-registry'
+    'ExecStartPre' => '/bin/chown -R ' + node[cookbook_name]['registry']['user'] + ':' + node[cookbook_name]['registry']['user'] + ' /var/log/schema-registry/'
     'User' => node[cookbook_name]['registry']['user'],
     'Group' => node[cookbook_name]['registry']['user'],
     'SyslogIdentifier' => 'schema-registry',
