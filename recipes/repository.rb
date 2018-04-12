@@ -29,7 +29,7 @@ when 'debian'
     uri "http://packages.confluent.io/deb/#{version}"
     components %w[stable main]
     arch 'amd64'
-    distribution nil
+    distribution 'debian'
     key "http://packages.confluent.io/deb/#{version}/archive.key"
   end
 end
