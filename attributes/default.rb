@@ -219,6 +219,7 @@ default[cookbook_name]['registry']['cli_opts'] = {
   '-Dcom.sun.management.jmxremote.authenticate' => false,
   '-Dcom.sun.management.jmxremote.ssl' => false,
   '-Dcom.sun.management.jmxremote.port' => 8091,
+  '-Dregistry.log.dir' => '/var/log/schema-registry',
   '-Djava.rmi.server.hostname' => node['fqdn']
 }
 
