@@ -205,7 +205,8 @@ default[cookbook_name]['registry']['log4j'] = {
   'log4j.logger.org.apache.kafka' => 'ERROR, stdout',
   'log4j.logger.org.I0Itec.zkclient' => 'ERROR, stdout',
   'log4j.additivity.kafka.server' => 'false',
-  'log4j.additivity.kafka.consumer.ZookeeperConsumerConnector' => 'false'
+  'log4j.additivity.kafka.consumer.ZookeeperConsumerConnector' => 'false',
+  'log4j.appender.file.File' => '/var/log/schema-registry/schema-registry.log'
 }
 
 # Schema Registry CLI configuration (see kafka cli_opts for documentation)
