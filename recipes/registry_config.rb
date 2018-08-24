@@ -27,14 +27,20 @@ node.run_state[cookbook_name]['registry']['interrupted'] = true
 # Get default configuration
 config = node[cookbook_name]['registry']['config'].to_hash
 
-# Search Zookeeper cluster
-zookeeper = cluster_search(node[cookbook_name]['zookeeper'])
-return if zookeeper.nil? # Not enough nodes
-zk_connection = zookeeper['hosts'].map do |host|
-  "#{host}:2181"
-end.join(',') + node[cookbook_name]['kafka']['zk_chroot']
-config['kafkastore.connection.url'] = zk_connection
+# Enable to set kafkastore.connection.url directly from registry configuration block.
 
+if node[cookbook_name]['registry']['config']['kafkastore.connection.url'].nil?
+  # Search Zookeeper cluster
+  zookeeper = cluster_search(node[cookbook_name]['zookeeper'])
+  return if zookeeper.nil? # Not enough nodes
+  zk_connection = zookeeper['hosts'].map do |host|
+    "#{host}:2181"
+  end.join(',') + node[cookbook_name]['kafka']['zk_chroot']
+  config['kafkastore.connection.url'] = zk_connection
+
+else
+  config['kafkastore.connection.url'] = node[cookbook_name]['registry']['config']['kafkastore.connection.url']
+end
 # Write configurations
 files = {
   '/etc/schema-registry/schema-registry.properties' => config,
